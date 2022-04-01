@@ -21,12 +21,17 @@ public class FileStorage {
     }
 
 
-    File findLocalFile(UUID uuid){
+    File findLocalFile(UUID uuid) {
         return new File(fileUploadPath + "/" + uuid);
     }
 
-    void checkIfExistsOrElseThrow(UUID uuid){
-        if(!fileRepo.existsById(uuid))
-            throw new FileDataNotFoundException("File data with id: " + uuid+ " not found");
+    FileData getFileDataById(UUID uuid){
+        return fileRepo.findById(uuid).orElseThrow(()-> new FileDataNotFoundException("File with id: " + uuid + " not found"));
+    }
+
+
+    public void checkIfExistsOrElseThrow(UUID uuid) {
+        if (!fileRepo.existsById(uuid))
+            throw new FileDataNotFoundException("File data with id: " + uuid + " not found");
     }
 }

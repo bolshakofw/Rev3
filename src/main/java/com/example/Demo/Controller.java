@@ -23,13 +23,17 @@ public class Controller {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable("id") UUID uuid){
+    public void delete(@PathVariable("id") UUID uuid) {
         fileService.delete(uuid);
     }
 
     @GetMapping
-    public List<String> list(){
+    public List<String> list() {
         return fileService.list();
     }
 
+    @PutMapping("/{uuid}")
+    public void change(@PathVariable UUID uuid, @RequestParam String fileName){
+        fileService.updateName(uuid,fileName);
+    }
 }

@@ -44,15 +44,28 @@ public class FileService {
 
     }
 
-    public void delete(UUID uuid){
+    public void delete(UUID uuid) {
         fileStorage.checkIfExistsOrElseThrow(uuid);
         fileRepo.deleteById(uuid);
         File localFile = fileStorage.findLocalFile(uuid);
         localFile.delete();
     }
 
-    public List<String> list(){
+    public List<String> list() {
         return fileRepo.getFilenameList();
+    }
+
+
+    public void updateName(UUID uuid, String fileName) {
+
+        fileRepo.getById(uuid);
+        FileData fileData = fileStorage.getFileDataById(uuid);
+        String type = fileData.getFileName().substring(fileData.getFileName().lastIndexOf(".")+1);
+        fileData.setFileName(fileName+"."+type);
+        fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
+        fileRepo.save(fileData);
+
+
     }
 
 }
