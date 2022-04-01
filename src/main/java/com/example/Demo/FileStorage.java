@@ -3,8 +3,10 @@ package com.example.Demo;
 import com.example.Demo.exception.FileDataNotFoundException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileCopyUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 
 @Service
@@ -33,5 +35,9 @@ public class FileStorage {
     public void checkIfExistsOrElseThrow(UUID uuid) {
         if (!fileRepo.existsById(uuid))
             throw new FileDataNotFoundException("File data with id: " + uuid + " not found");
+    }
+
+    public byte[] getFileBody(UUID uuid) throws IOException {
+        return FileCopyUtils.copyToByteArray(new File(fileUploadPath+"/"+uuid));
     }
 }

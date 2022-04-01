@@ -1,6 +1,7 @@
 package com.example.Demo;
 
 
+import com.example.Demo.exception.FileDataNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,12 +61,22 @@ public class FileService {
 
         fileRepo.getById(uuid);
         FileData fileData = fileStorage.getFileDataById(uuid);
-        String type = fileData.getFileName().substring(fileData.getFileName().lastIndexOf(".")+1);
-        fileData.setFileName(fileName+"."+type);
+        String type = fileData.getFileName().substring(fileData.getFileName().lastIndexOf(".") + 1);
+        fileData.setFileName(fileName + "." + type);
         fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
         fileRepo.save(fileData);
 
 
+    }
+
+    public byte[] getBody(UUID uuid) throws IOException {
+        fileStorage.checkIfExistsOrElseThrow(uuid);
+        return fileStorage.getFileBody(uuid);
+    }
+
+    public String getFileName(UUID uuid){
+        return fileRepo.getFileNameById(uuid)
+                .orElseThrow(()-> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
 
 }
