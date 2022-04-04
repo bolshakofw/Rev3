@@ -4,17 +4,17 @@ package com.example.Demo.controller;
 import com.example.Demo.FileData;
 import com.example.Demo.Service.FileService;
 import com.example.Demo.Service.FileStorage;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
+
 
 @RequestMapping("/api/file")
 @RestController
@@ -56,13 +56,7 @@ public class Controller {
         return fileService.updateName(uuid, fileName);
     }
 
-//    public void filter(@RequestParam(required = false,name = "fileName")String fileName,
-//                       @RequestParam(required = false,name = "fileType")String fileType,
-//                       @RequestParam(required = false,name = "from")Long from,
-//                       @RequestParam(required = false,name = "till")Long till){
-//        return new ResponseEntity<>(new )
-//
-//    }
+
 
     //Скачивание одного файла
     @GetMapping("/download/{uuid}")
@@ -93,4 +87,6 @@ public class Controller {
         header.setContentLength(fileSize);
         return header;
     }
+
+
 }

@@ -1,33 +1,24 @@
 package com.example.Demo.Service;
 
 
-import com.example.Demo.DTO.FileDataDto;
 import com.example.Demo.FileData;
 import com.example.Demo.exception.EmptyFieldException;
 import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.exception.InvalidFileSizeException;
 import com.example.Demo.exception.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepo;
-import org.apache.tomcat.jni.FileInfo;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.xml.transform.Result;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Timestamp;
-import java.util.LinkedList;
+import java.io.PrintWriter;
+import java.sql.*;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -104,26 +95,6 @@ public class FileService {
 
     }
 
-//    public List<FileDataDto> filter(String fileName, String fileType, Long from, Long till){
-//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//        CriteriaQuery <FileData> criteriaQuery = criteriaBuilder.createQuery(FileData.class);
-//        Root<FileData> fileDataRoot = criteriaQuery.from(FileData.class);
-//
-//        List<Predicate> predicateList = new LinkedList<>();
-//        if(StringUtils.hasLength(fileName))
-//            predicateList.add(criteriaBuilder.like(fileDataRoot.get("fileName"),"%" + fileName+"%"));
-//        if(StringUtils.hasLength(fileType))
-//            predicateList.add(criteriaBuilder.like(fileDataRoot.get("fileType"),"%" + fileType+"%"));
-//        if(!Objects.isNull(from))
-//            predicateList.add(criteriaBuilder.greaterThan(fileDataRoot.get("change_time"),new Timestamp(from)));
-//        if(!Objects.isNull(till))
-//            predicateList.add(criteriaBuilder.lessThan(fileDataRoot.get("change_time"),new Timestamp(till)));
-//
-//        criteriaQuery.where(predicateList.toArray(new Predicate[0]));
-//        TypedQuery<FileData> fileInfoTypedQuery = entityManager.createQuery(criteriaQuery);
-//        return fileInfoTypedQuery.getResultList().stream().map(FileDataDto::new).collect(Collectors.toList());
-//    }
-
 
     public byte[] getBody(UUID uuid) throws IOException {
         fileStorage.checkExists(uuid);
@@ -148,5 +119,9 @@ public class FileService {
         return fileRepo.getFileNameById(uuid)
                 .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
+
+
+
+
 
 }
