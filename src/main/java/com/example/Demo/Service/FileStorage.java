@@ -1,6 +1,8 @@
-package com.example.Demo;
+package com.example.Demo.Service;
 
+import com.example.Demo.FileData;
 import com.example.Demo.exception.FileDataNotFoundException;
+import com.example.Demo.repository.FileRepo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -16,15 +18,15 @@ public class FileStorage {
 
 
     @Value("${file.upload-dir}")
-    String fileUploadPath;
+    String fileUploadDir;
 
     public FileStorage(FileRepo fileRepo) {
         this.fileRepo = fileRepo;
     }
 
 
-    File findLocalFile(UUID uuid) {
-        return new File(fileUploadPath + "/" + uuid);
+    File findFile(UUID uuid) {
+        return new File(fileUploadDir + "/" + uuid);
     }
 
     FileData getFileDataById(UUID uuid){
@@ -32,12 +34,12 @@ public class FileStorage {
     }
 
 
-    public void checkIfExistsOrElseThrow(UUID uuid) {
+    public void checkExists(UUID uuid) {
         if (!fileRepo.existsById(uuid))
             throw new FileDataNotFoundException("File data with id: " + uuid + " not found");
     }
 
     public byte[] getFileBody(UUID uuid) throws IOException {
-        return FileCopyUtils.copyToByteArray(new File(fileUploadPath+"/"+uuid));
+        return FileCopyUtils.copyToByteArray(new File(fileUploadDir+"/"+uuid));
     }
 }
