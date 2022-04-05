@@ -1,17 +1,19 @@
 package com.example.Demo.controller;
 
 
-import com.example.Demo.FileData;
+import com.example.Demo.DTO.ListDto;
 import com.example.Demo.Service.FileService;
 import com.example.Demo.Service.FileStorage;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,46 +35,39 @@ public class Controller {
 
     //Загрузка файла
     @PostMapping
-
+    @Tag(name = "Файлы", description = "Действия с файлами")
+    @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
     public void upload(MultipartFile file) throws IOException {
         fileService.upload(file);
     }
 
     //Удаление
     @DeleteMapping("/{id}")
+    @Tag(name = "Файлы", description = "Действия с файлами")
+    @Operation(summary = "Удаление файла", description = "Удаляет файл по UUID")
     public void delete(@PathVariable("id") UUID uuid) {
         fileService.delete(uuid);
     }
 
-    //Список имён
-    @GetMapping
-    public List<String> list() {
-        return fileService.list();
-    }
-
-    //Изменение имени
-    @PutMapping("/{uuid}")
-    public FileData change(@PathVariable UUID uuid, @RequestParam String fileName) {
-        return fileService.updateName(uuid, fileName);
-    }
-
-
 
     //Скачивание одного файла
-    @GetMapping("/download/{uuid}")
-    public HttpEntity<byte[]> download(@PathVariable UUID uuid) throws IOException {
-        byte[] body = fileStorage.getFileBody(uuid);
+    @GetMapping("/download/{id}")
+    @Tag(name = "Файлы", description = "Действия с файлами")
+    @Operation(summary = "Скачивание файла", description = "Скачивает файл по UUID")
+    public HttpEntity<byte[]> download(@PathVariable UUID id) throws IOException {
+        byte[] body = fileStorage.getFileBody(id);
         return new HttpEntity<>(
                 body,
-                createHeader(fileService.getFileName(uuid), body.length)
+                createHeader(fileService.getFileName(id), body.length)
         );
     }
 
 
     //Скачивание архива файлов
     @GetMapping("/download/zip")
+    @Tag(name = "Файлы", description = "Действия с файлами")
+    @Operation(summary = "Скачивание архива файлов", description = "Скачивает архив файлов по UUID")
     public HttpEntity<byte[]> downloadZip(@RequestParam("ids") UUID[] ids) throws IOException {
-
         byte[] body = fileService.downloadZip(ids);
         return new HttpEntity<>(
                 body,
@@ -86,6 +81,33 @@ public class Controller {
         header.set("Content-Disposition", "attachment; filename=" + fileName);
         header.setContentLength(fileSize);
         return header;
+    }
+
+    @GetMapping("/filter")
+    public ResponseEntity<ListDto> filter(@RequestParam(required = false, name = "fileName") String fileName,
+                                          @RequestParam(required = false, name = "fileType") String fileType,
+                                          @RequestParam(required = false, name = "from") Long from,
+                                          @RequestParam(required = false, name = "till") Long till) {
+        return new ResponseEntity<>(new ListDto(fileService.filter(fileName, fileType, from, till)),
+                HttpStatus.OK
+        );
+
+    }
+
+    //Список имён
+    @GetMapping
+    @Tag(name = "Имена файлов", description = "Действия с именами файлов")
+    @Operation(summary = "Список имён файлов", description = "Выводит список имён всех файлов")
+    public List<String> list() {
+        return fileService.list();
+    }
+
+    //Изменение имени
+    @PutMapping("/{id}")
+    @Tag(name = "Имена файлов", description = "Действия с именами файлов")
+    @Operation(summary = "Изменение имени файла", description = "Изменяет имя файла по его UUID")
+    public void change(@PathVariable UUID id, @RequestParam String fileName) {
+        fileService.updateName(id, fileName);
     }
 
 

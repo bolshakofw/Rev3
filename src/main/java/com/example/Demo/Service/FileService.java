@@ -1,6 +1,7 @@
 package com.example.Demo.Service;
 
 
+import com.example.Demo.DTO.FileDataDto;
 import com.example.Demo.FileData;
 import com.example.Demo.exception.EmptyFieldException;
 import com.example.Demo.exception.FileDataNotFoundException;
@@ -8,17 +9,24 @@ import com.example.Demo.exception.InvalidFileSizeException;
 import com.example.Demo.exception.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepo;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
-import javax.xml.transform.Result;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.*;
+import java.sql.Timestamp;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -70,10 +78,10 @@ public class FileService {
 
     }
 
-    public void delete(UUID uuid) {
-        fileStorage.checkExists(uuid);
-        fileRepo.deleteById(uuid);
-        File localFile = fileStorage.findFile(uuid);
+    public void delete(UUID id) {
+        fileStorage.checkExists(id);
+        fileRepo.deleteById(id);
+        File localFile = fileStorage.findFile(id);
         localFile.delete();
     }
 
@@ -82,28 +90,48 @@ public class FileService {
     }
 
 
-    public FileData updateName(UUID uuid, String fileName) {
+    public void updateName(UUID id, String fileName) {
 
-        fileRepo.getById(uuid);
-        FileData fileData = fileStorage.getFileDataById(uuid);
+        fileRepo.getById(id);
+        FileData fileData = fileStorage.getFileDataById(id);
         String type = fileData.getFileName().substring(fileData.getFileName().lastIndexOf(".") + 1);
         fileData.setFileName(fileName + "." + type);
         fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
         fileRepo.save(fileData);
-        return fileData;
-
 
     }
 
+    public List<FileDataDto> filter(String name, String type, Long from, Long till) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<FileData> query = builder.createQuery(FileData.class);
+        Root<FileData> root = query.from(FileData.class);
+        List<Predicate> list = new LinkedList<>();
 
-    public byte[] getBody(UUID uuid) throws IOException {
-        fileStorage.checkExists(uuid);
-        return fileStorage.getFileBody(uuid);
+        if (StringUtils.hasLength(name))
+            list.add(builder.like(root.get("fileName"), "%" + name + "%"));
+        if (StringUtils.hasLength(type))
+            list.add(builder.like(root.get("fileType"), "%" + type + "%"));
+        if (!Objects.isNull(from))
+            list.add(builder.greaterThan(root.get("change_time"), new Timestamp(from)));
+        if (!Objects.isNull(till))
+            list.add(builder.lessThan(root.get("change_time"), new Timestamp(till)));
+
+        query.where(list.toArray(new Predicate[0]));
+
+        TypedQuery<FileData> fileInfoTypedQuery = entityManager.createQuery(query);
+        return fileInfoTypedQuery.getResultList().stream().map(FileDataDto::new).collect(Collectors.toList());
+
+    }
+
+    public byte[] getBody(UUID id) throws IOException {
+        fileStorage.checkExists(id);
+        return fileStorage.getFileBody(id);
     }
 
     public byte[] downloadZip(UUID[] uuids) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
             try (ZipOutputStream zos = new ZipOutputStream(bos)) {
+
                 for (UUID uuid : uuids) {
                     zos.putNextEntry(new ZipEntry(getFileName(uuid)));
                     zos.write(fileStorage.getFileBody(uuid));
@@ -119,9 +147,5 @@ public class FileService {
         return fileRepo.getFileNameById(uuid)
                 .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
-
-
-
-
 
 }

@@ -3,13 +3,16 @@ package com.example.Demo.DTO;
 
 import lombok.Getter;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+
 @Getter
 public class ErrorDetails {
-    private long timestamp;
+    private Timestamp timestamp;
     private String message;
 
     public ErrorDetails(String message) {
-        timestamp = System.currentTimeMillis();
+        timestamp = new Timestamp(System.currentTimeMillis());
         this.message = message;
     }
 }
