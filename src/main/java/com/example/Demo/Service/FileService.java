@@ -1,7 +1,6 @@
 package com.example.Demo.Service;
 
 
-import com.example.Demo.DTO.FileDataDto;
 import com.example.Demo.FileData;
 import com.example.Demo.exception.EmptyFieldException;
 import com.example.Demo.exception.FileDataNotFoundException;
@@ -26,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -49,7 +47,7 @@ public class FileService {
     }
 
 
-    public void upload(MultipartFile file) throws IOException {
+    public FileData upload(MultipartFile file) throws IOException {
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
             throw new InvalidFileTypeException(file.getContentType() + " not a valid file type , supported file types " + CONTENT_TYPES);
         } else if (!(file.getSize() < MAX_SIZE)) {
@@ -75,7 +73,7 @@ public class FileService {
 
         File localFile = fileStorage.findFile(fileData.getUuid());
         file.transferTo(localFile);
-
+        return fileData;
     }
 
     public void delete(UUID id) {
@@ -101,7 +99,7 @@ public class FileService {
 
     }
 
-    public List<FileDataDto> filter(String name, String type, Long from, Long till) {
+    public List<FileData> filterr(String name, String type, Long from, Long till) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<FileData> query = builder.createQuery(FileData.class);
         Root<FileData> root = query.from(FileData.class);
@@ -119,7 +117,7 @@ public class FileService {
         query.where(list.toArray(new Predicate[0]));
 
         TypedQuery<FileData> fileInfoTypedQuery = entityManager.createQuery(query);
-        return fileInfoTypedQuery.getResultList().stream().map(FileDataDto::new).collect(Collectors.toList());
+        return fileInfoTypedQuery.getResultList();
 
     }
 

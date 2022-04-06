@@ -1,15 +1,13 @@
 package com.example.Demo.controller;
 
 
-import com.example.Demo.DTO.ListDto;
+import com.example.Demo.FileData;
 import com.example.Demo.Service.FileService;
 import com.example.Demo.Service.FileStorage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -37,8 +35,8 @@ public class Controller {
     @PostMapping
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
-    public void upload(MultipartFile file) throws IOException {
-        fileService.upload(file);
+    public FileData upload(MultipartFile file) throws IOException {
+        return fileService.upload(file);
     }
 
     //Удаление
@@ -83,15 +81,14 @@ public class Controller {
         return header;
     }
 
-    @GetMapping("/filter")
-    public ResponseEntity<ListDto> filter(@RequestParam(required = false, name = "fileName") String fileName,
-                                          @RequestParam(required = false, name = "fileType") String fileType,
-                                          @RequestParam(required = false, name = "from") Long from,
-                                          @RequestParam(required = false, name = "till") Long till) {
-        return new ResponseEntity<>(new ListDto(fileService.filter(fileName, fileType, from, till)),
-                HttpStatus.OK
-        );
-
+    @GetMapping("/filterr")
+    @Tag(name = "Имена файлов", description = "Действия с именами файлов")
+    @Operation(summary = "Список файлов", description = "Выводит список моделей всех файлов")
+    public List<FileData> filterr(@RequestParam(required = false, name = "fileName") String fileName,
+                                  @RequestParam(required = false, name = "fileType") String fileType,
+                                  @RequestParam(required = false, name = "from") Long from,
+                                  @RequestParam(required = false, name = "till") Long till) {
+        return fileService.filterr(fileName,fileType,from,till);
     }
 
     //Список имён
