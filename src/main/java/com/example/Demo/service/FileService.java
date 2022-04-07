@@ -6,16 +6,13 @@ import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.exception.InvalidFileSizeException;
 import com.example.Demo.exception.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepo;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -37,12 +34,11 @@ public class FileService {
 
     private final FileStorage fileStorage;
 
-    private final EntityManager entityManager;
 
-    public FileService(FileRepo fileRepo, FileStorage fileStorage, EntityManager entityManager) {
+    public FileService(FileRepo fileRepo, FileStorage fileStorage) {
         this.fileRepo = fileRepo;
         this.fileStorage = fileStorage;
-        this.entityManager = entityManager;
+
     }
 
 
@@ -96,27 +92,26 @@ public class FileService {
     }
 
     public List<FileData> filterr(String name, String type, Long from, Long till) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<FileData> query = builder.createQuery(FileData.class);
-        Root<FileData> root = query.from(FileData.class);
-        List<Predicate> list = new LinkedList<>();
-
-        if (StringUtils.hasLength(name))
-            list.add(builder.like(root.get("fileName"), "%" + name + "%"));
-        if (StringUtils.hasLength(type))
-            list.add(builder.like(root.get("fileType"), "%" + type + "%"));
-        if (!Objects.isNull(from))
-            list.add(builder.greaterThan(root.get("change_time"), new Timestamp(from)));
-        if (!Objects.isNull(till))
-            list.add(builder.lessThan(root.get("change_time"), new Timestamp(till)));
-
-        query.where(list.toArray(new Predicate[0]));
-
-        TypedQuery<FileData> fileInfoTypedQuery = entityManager.createQuery(query);
-        return fileInfoTypedQuery.getResultList();
-
+        return fileRepo.findAll(getFileDataSpecification(name, type, from, till));
     }
 
+    private Specification<FileData> getFileDataSpecification(String name, String type, Long from, Long till) {
+        return (root, query, builder) -> {
+            List<Predicate> list = new LinkedList<>();
+            if (StringUtils.hasLength(name))
+                list.add(builder.like(root.get("fileName"), "%" + name + "%"));
+            if (StringUtils.hasLength(type))
+                list.add(builder.like(root.get("fileType"), "%" + type + "%"));
+            if (!Objects.isNull(from))
+                list.add(builder.greaterThan(root.get("changeTime"), new Timestamp(from)));
+            if (!Objects.isNull(till))
+                list.add(builder.lessThan(root.get("changeTime"), new Timestamp(till)));
+            return builder.or(list.toArray(Predicate[]::new));
+        };
+
+    }
+    //1649295442000
+//1649273842000
 
     public byte[] downloadZip(UUID[] uuids) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
