@@ -1,8 +1,7 @@
-package com.example.Demo.Service;
+package com.example.Demo.service;
 
 
 import com.example.Demo.FileData;
-import com.example.Demo.exception.EmptyFieldException;
 import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.exception.InvalidFileSizeException;
 import com.example.Demo.exception.InvalidFileTypeException;
@@ -53,7 +52,7 @@ public class FileService {
         } else if (!(file.getSize() < MAX_SIZE)) {
             throw new InvalidFileSizeException("The file size is more than " + MAX_SIZE);
         } else if (file.getOriginalFilename() == null || file.getOriginalFilename().isEmpty()) {
-            throw new EmptyFieldException("Empty filename or file not received");
+            throw new NullPointerException("Empty filename or file not received");
         }
 
         FileData fileData = new FileData();
@@ -63,14 +62,11 @@ public class FileService {
         fileData.setSize(file.getSize());
         fileData.setLoadTime(new Timestamp(System.currentTimeMillis()));
         fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
+        fileData.setFileDownloadUri("/api/file/download/" + fileData.getUuid().toString());
 
         fileRepo.save(fileData);
 
         File fileUploadDir = new File(fileStorage.fileUploadDir);
-        if (!fileUploadDir.exists())
-            fileUploadDir.mkdirs();
-
-
         File localFile = fileStorage.findFile(fileData.getUuid());
         file.transferTo(localFile);
         return fileData;
@@ -121,10 +117,6 @@ public class FileService {
 
     }
 
-    public byte[] getBody(UUID id) throws IOException {
-        fileStorage.checkExists(id);
-        return fileStorage.getFileBody(id);
-    }
 
     public byte[] downloadZip(UUID[] uuids) throws IOException {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
@@ -145,5 +137,4 @@ public class FileService {
         return fileRepo.getFileNameById(uuid)
                 .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
-
 }

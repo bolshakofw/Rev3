@@ -1,6 +1,5 @@
 package com.example.Demo;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.Entity;
@@ -14,9 +13,11 @@ import java.util.UUID;
 @Entity
 @Table
 public class FileData {
+
     @Id
 
     private UUID uuid;
+
 
     private String fileName;
 
@@ -27,8 +28,9 @@ public class FileData {
     private Timestamp loadTime;
 
     private Timestamp changeTime;
-//    @JsonIgnore
-//    private byte[] bytes;
+
+
+    private String fileDownloadUri;
 
 
 }

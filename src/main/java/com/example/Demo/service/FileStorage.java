@@ -1,4 +1,4 @@
-package com.example.Demo.Service;
+package com.example.Demo.service;
 
 import com.example.Demo.FileData;
 import com.example.Demo.exception.FileDataNotFoundException;
@@ -17,8 +17,6 @@ public class FileStorage {
     private final FileRepo fileRepo;
 
 
-
-
     @Value("${file.upload-dir}")
     String fileUploadDir;
 
@@ -31,8 +29,8 @@ public class FileStorage {
         return new File(fileUploadDir + "/" + uuid);
     }
 
-    FileData getFileDataById(UUID uuid){
-        return fileRepo.findById(uuid).orElseThrow(()-> new FileDataNotFoundException("File with id: " + uuid + " not found"));
+    FileData getFileDataById(UUID uuid) {
+        return fileRepo.findById(uuid).orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
 
 
@@ -42,6 +40,6 @@ public class FileStorage {
     }
 
     public byte[] getFileBody(UUID uuid) throws IOException {
-        return FileCopyUtils.copyToByteArray(new File(fileUploadDir+"/"+uuid));
+        return FileCopyUtils.copyToByteArray(new File(fileUploadDir + "/" + uuid));
     }
 }

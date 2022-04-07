@@ -2,8 +2,8 @@ package com.example.Demo.controller;
 
 
 import com.example.Demo.FileData;
-import com.example.Demo.Service.FileService;
-import com.example.Demo.Service.FileStorage;
+import com.example.Demo.service.FileService;
+import com.example.Demo.service.FileStorage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpEntity;
@@ -88,7 +88,7 @@ public class Controller {
                                   @RequestParam(required = false, name = "fileType") String fileType,
                                   @RequestParam(required = false, name = "from") Long from,
                                   @RequestParam(required = false, name = "till") Long till) {
-        return fileService.filterr(fileName,fileType,from,till);
+        return fileService.filterr(fileName, fileType, from, till);
     }
 
     //Список имён
