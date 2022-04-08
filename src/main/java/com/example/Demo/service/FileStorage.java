@@ -18,19 +18,20 @@ public class FileStorage {
 
 
     @Value("${file.upload-dir}")
-    String fileUploadDir;
+    public String fileUploadDir;
 
     public FileStorage(FileRepo fileRepo) {
         this.fileRepo = fileRepo;
     }
 
 
-    File findFile(UUID uuid) {
+    public File findFile(UUID uuid) {
         return new File(fileUploadDir + "/" + uuid);
     }
 
-    FileData getFileDataById(UUID uuid) {
-        return fileRepo.findById(uuid).orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
+    public FileData getFileDataById(UUID uuid) {
+        return fileRepo.findById(uuid)
+                .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
 
 

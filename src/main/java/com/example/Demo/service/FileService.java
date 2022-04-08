@@ -91,7 +91,7 @@ public class FileService {
 
     }
 
-    public List<FileData> filterr(String name, String type, Long from, Long till) {
+    public List<FileData> filter(String name, String type, Long from, Long till) {
         return fileRepo.findAll(getFileDataSpecification(name, type, from, till));
     }
 
@@ -131,4 +131,6 @@ public class FileService {
         return fileRepo.getFileNameById(uuid)
                 .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
+
+
 }

@@ -15,6 +15,8 @@ import org.mockito.exceptions.misusing.UnfinishedStubbingException;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @ExtendWith(MockitoExtension.class)
 public class Testing {
 
@@ -45,7 +47,11 @@ public class Testing {
         Mockito.verify(fileRepo).getFilenameList();
     }
 
-
+    @Test
+    void testGetFileName() {
+        Mockito.when(fileRepo.getFileNameById(Mockito.any())).thenReturn(Optional.empty());
+        Assertions.assertThrows(FileDataNotFoundException.class, () -> fileService.getFileName(Mockito.any()));
+    }
 
 
 }

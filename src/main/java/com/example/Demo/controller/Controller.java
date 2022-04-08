@@ -81,14 +81,14 @@ public class Controller {
         return header;
     }
 
-    @GetMapping("/filterr")
+    @GetMapping("/filter")
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Список файлов", description = "Выводит список моделей всех файлов")
     public List<FileData> filterr(@RequestParam(required = false, name = "fileName") String fileName,
                                   @RequestParam(required = false, name = "fileType") String fileType,
                                   @RequestParam(required = false, name = "from") Long from,
                                   @RequestParam(required = false, name = "till") Long till) {
-        return fileService.filterr(fileName, fileType, from, till);
+        return fileService.filter(fileName, fileType, from, till);
     }
 
     //Список имён
