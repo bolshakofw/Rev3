@@ -2,6 +2,7 @@ package com.example.Demo.service;
 
 
 import com.example.Demo.FileData;
+import com.example.Demo.exception.EmptyFieldException;
 import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.exception.InvalidFileSizeException;
 import com.example.Demo.exception.InvalidFileTypeException;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
 import javax.persistence.criteria.Predicate;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,7 +48,7 @@ public class FileService {
         } else if (!(file.getSize() < MAX_SIZE)) {
             throw new InvalidFileSizeException("The file size is more than " + MAX_SIZE);
         } else if (file.getOriginalFilename() == null || file.getOriginalFilename().isEmpty()) {
-            throw new NullPointerException("Empty filename or file not received");
+            throw new EmptyFieldException("Empty filename or file not received");
         }
 
         FileData fileData = new FileData();
@@ -62,9 +62,7 @@ public class FileService {
 
         fileRepo.save(fileData);
 
-        File fileUploadDir = new File(fileStorage.fileUploadDir);
-        File localFile = fileStorage.findFile(fileData.getUuid());
-        file.transferTo(localFile);
+        file.transferTo(fileStorage.findFile(fileData.getUuid()));
         return fileData;
     }
 
@@ -132,5 +130,10 @@ public class FileService {
                 .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
 
+
+    public byte[] getFile(UUID uuid) throws IOException {
+        fileStorage.checkExists(uuid);
+        return fileStorage.getFileBody(uuid);
+    }
 
 }

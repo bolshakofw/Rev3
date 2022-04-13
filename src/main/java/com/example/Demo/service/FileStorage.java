@@ -3,6 +3,7 @@ package com.example.Demo.service;
 import com.example.Demo.FileData;
 import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.repository.FileRepo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileCopyUtils;
@@ -20,6 +21,7 @@ public class FileStorage {
     @Value("${file.upload-dir}")
     public String fileUploadDir;
 
+    @Autowired
     public FileStorage(FileRepo fileRepo) {
         this.fileRepo = fileRepo;
     }
@@ -29,9 +31,9 @@ public class FileStorage {
         return new File(fileUploadDir + "/" + uuid);
     }
 
+
     public FileData getFileDataById(UUID uuid) {
-        return fileRepo.findById(uuid)
-                .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
+        return fileRepo.findById(uuid).orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
 
 
