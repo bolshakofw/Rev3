@@ -17,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,38 +51,23 @@ public class Testing {
 
 
     @Test
-    void repoSave() {
+    void repoSave() throws IOException {
 
         MockMultipartFile file = new MockMultipartFile("test", "text", MediaType.TEXT_PLAIN_VALUE, new byte[30]);
-        FileData fileData = new FileData();
-        fileData.setUuid(UUID.randomUUID());
-        fileData.setFileType(file.getContentType());
-        fileData.setFileName(file.getName());
-        fileData.setSize(file.getSize());
-        fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
-        fileData.setLoadTime(new Timestamp(System.currentTimeMillis()));
+        FileData fileData1 = new FileData();
+        fileData1.setUuid(UUID.randomUUID());
+        fileData1.setFileName(file.getOriginalFilename());
+        fileData1.setFileType(file.getContentType());
+        fileData1.setSize(file.getSize());
+        fileData1.setLoadTime(new Timestamp(System.currentTimeMillis()));
+        fileData1.setChangeTime(new Timestamp(System.currentTimeMillis()));
+        fileData1.setFileDownloadUri("/api/file/download/" + fileData1.getUuid().toString());
 
-        fileRepo.save(fileData);
-
-        Mockito.verify(fileRepo).save(fileData);
+        Mockito.when(fileStorage.findFile(Mockito.any())).thenReturn(new File("C:/Users/karimullin-ai/uploads" + "/" + fileData1.getUuid().toString()));
 
 
-    }
-
-    @Test
-    void findF() {
-        MockMultipartFile file = new MockMultipartFile("test", "text", MediaType.TEXT_PLAIN_VALUE, new byte[30]);
-        FileData fileData = new FileData();
-        fileData.setUuid(UUID.randomUUID());
-        fileData.setFileType(file.getContentType());
-        fileData.setFileName(file.getName());
-        fileData.setSize(file.getSize());
-        fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
-        fileData.setLoadTime(new Timestamp(System.currentTimeMillis()));
-
-        fileStorage.findFile(fileData.getUuid());
-        Mockito.verify(fileStorage).findFile(fileData.getUuid());
-
+        fileService.upload(file);
+        Mockito.verify(fileRepo).save((fileData1));
     }
 
 
