@@ -1,7 +1,7 @@
 package com.example.Demo.controller;
 
 
-import com.example.Demo.FileData;
+import com.example.Demo.entity.FileData;
 import com.example.Demo.service.FileService;
 import com.example.Demo.service.FileStorage;
 import io.swagger.v3.oas.annotations.Operation;

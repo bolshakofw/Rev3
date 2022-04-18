@@ -1,7 +1,7 @@
 package com.example.Demo.service;
 
 
-import com.example.Demo.FileData;
+import com.example.Demo.entity.FileData;
 import com.example.Demo.exception.EmptyFieldException;
 import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.exception.InvalidFileSizeException;
@@ -50,20 +50,17 @@ public class FileService {
         } else if (file.getOriginalFilename() == null || file.getOriginalFilename().isEmpty()) {
             throw new EmptyFieldException("Empty filename or file not received");
         }
-
         FileData fileData = new FileData();
-        fileData.setUuid(UUID.randomUUID());
         fileData.setFileName(file.getOriginalFilename());
         fileData.setFileType(file.getContentType());
         fileData.setSize(file.getSize());
         fileData.setLoadTime(new Timestamp(System.currentTimeMillis()));
         fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
-        fileData.setFileDownloadUri("/api/file/download/" + fileData.getUuid().toString());
 
-        fileRepo.save(fileData);
+        //fileData.setFileDownloadUri("/api/file/download/" + save.getUuid());
 
-        file.transferTo(fileStorage.findFile(fileData.getUuid()));
-        return fileData;
+        //file.transferTo(fileStorage.findFile(save);
+        return fileRepo.save(fileData);
     }
 
     public void delete(UUID id) {

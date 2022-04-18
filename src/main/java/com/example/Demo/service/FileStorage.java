@@ -1,6 +1,6 @@
 package com.example.Demo.service;
 
-import com.example.Demo.FileData;
+import com.example.Demo.entity.FileData;
 import com.example.Demo.exception.FileDataNotFoundException;
 import com.example.Demo.repository.FileRepo;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,6 @@
 package com.example.Demo.repository;
 
-import com.example.Demo.FileData;
+import com.example.Demo.entity.FileData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
