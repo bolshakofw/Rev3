@@ -27,7 +27,7 @@ public class FileStorage {
     }
 
 
-    public File findFile(UUID uuid) {
+    public File createFile(UUID uuid) {
         return new File(fileUploadDir + "/" + uuid);
     }
 

@@ -8,7 +8,6 @@ import com.example.Demo.exception.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepo;
 import com.example.Demo.service.FileService;
 import com.example.Demo.service.FileStorage;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
@@ -18,14 +17,13 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Optional;
 import java.util.UUID;
 
-
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 
@@ -42,6 +40,11 @@ public class Testing {
     @Mock
     private FileRepo fileRepo;
 
+    @Mock
+    private MultipartFile multipartFile;
+
+    @Mock
+    private MultiFake multiFake;
     /*
     1) все успешно:
         вызов fileRepo.save с ожидаемыми данными
@@ -49,67 +52,49 @@ public class Testing {
     2) ошибки валидации - 2 теста, на каждую ошибку
      */
 
-//    @Test
-//    @DisplayName("Успешная загрузка файла")
-//    void whenCorrectFile_thenSuccess() {
-//        new MockMultipartFile("test.text", (String) null, (String) null, (byte[]) null);
-//        Mockito.when().thenReturn();
-//    }
-
 
     @Test
     void repoSave() throws IOException {
 
-        MockMultipartFile file = new MockMultipartFile("test", "text", MediaType.TEXT_PLAIN_VALUE, new byte[30]);
+        MultiFake fake = new MultiFake("test", "text", MediaType.TEXT_PLAIN_VALUE, new byte[30]);
+
         FileData fileData1 = new FileData();
-        //fileData1.setUuid(UUID.randomUUID());
-        fileData1.setFileName(file.getOriginalFilename());
-        fileData1.setFileType(file.getContentType());
-        fileData1.setSize(file.getSize());
+        fileData1.setUuid(UUID.randomUUID());
+        fileData1.setFileName(fake.getOriginalFilename());
+        fileData1.setFileType(fake.getContentType());
+        fileData1.setSize(fake.getSize());
         fileData1.setLoadTime(new Timestamp(System.currentTimeMillis()));
         fileData1.setChangeTime(new Timestamp(System.currentTimeMillis()));
-        //fileData1.setFileDownloadUri("/api/file/download/" + fileData1.getUuid().toString());
 
 
-        //Mockito.when(fileStorage.findFile(Mockito.any())).thenReturn(new File("C:/Users/karimullin-ai/uploads" + "/" + UUID.randomUUID()));
-        fileService.upload(file);
-
+        fileService.upload(fake);
 
         verify(fileRepo).save(argThat(new FileDataMatcher(fileData1)));
-
-    }
-
-
-    @Test
-    void findFileTest(){
-        UUID uuid = UUID.randomUUID();
-        String fileUploadDir = "C:/Users/karimullin-ai/uploads";
-        Mockito.when(fileStorage.findFile(Mockito.any())).thenReturn(new File("C:/Users/karimullin-ai/uploads" + "/" + uuid));
-        File file1 = fileStorage.findFile(uuid);
-        File file2 = new File(fileUploadDir+"/"+uuid);
-        Assertions.assertEquals(file1,file2);
-
-
     }
 
 
     @Test
     void wrongFileType() {
         MockMultipartFile mfile = new MockMultipartFile("test", "text", MediaType.APPLICATION_CBOR_VALUE, new byte[30]);
-        Assertions.assertThrows(InvalidFileTypeException.class, () -> fileService.upload(mfile));
+        assertThatThrownBy(() -> {
+            fileService.upload(mfile);
+        }).isInstanceOf(InvalidFileTypeException.class);
     }
 
     @Test
     void wrongFileSize() {
         MockMultipartFile mfile = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, new byte[999999999]);
-        Assertions.assertThrows(InvalidFileSizeException.class, () -> fileService.upload(mfile));
+        assertThatThrownBy(() -> {
+            fileService.upload(mfile);
+        }).isInstanceOf(InvalidFileSizeException.class).hasMessageContaining("The file size is more than");
     }
 
 
     @Test
     void testDelete() {
-        Mockito.doThrow(new FileDataNotFoundException("test")).when(fileStorage).checkExists(Mockito.any());
-        Assertions.assertThrows(FileDataNotFoundException.class, () -> fileService.delete(Mockito.any()));
+        assertThatThrownBy(() -> {
+            fileService.delete(Mockito.any());
+        }).isInstanceOf(NullPointerException.class);
     }
 
     @Test
@@ -120,16 +105,10 @@ public class Testing {
 
     @Test
     void testGetFileName() {
-        Mockito.when(fileRepo.getFileNameById(Mockito.any())).thenReturn(Optional.empty());
-        Assertions.assertThrows(FileDataNotFoundException.class, () -> fileService.getFileName(Mockito.any()));
+        assertThatThrownBy(() -> {
+            fileService.getFileName(Mockito.any());
+        }).isInstanceOf(FileDataNotFoundException.class);
     }
-
-    @Test
-    void testCheckExists() {
-        Mockito.doThrow(new FileDataNotFoundException("test")).when(fileStorage).checkExists(Mockito.any());
-        Assertions.assertThrows(FileDataNotFoundException.class, () -> fileService.getFile(Mockito.any()));
-    }
-
 
 }
 
@@ -141,17 +120,9 @@ class FileDataMatcher implements ArgumentMatcher<FileData> {
         this.test = fileData1;
     }
 
-//
-//    And and = new And(argumentMatcher , FileDataMatcher);
-//
-//    Not not = new Not(argumentMatcher);
-//
-//    Or or = new Or(argumentMatcher,argumentMatcher);
-
 
     @Override
     public boolean matches(FileData argument) {
-
 
         return test.getFileName().equals(argument.getFileName()) &&
                 test.getFileType().equals(argument.getFileType()) &&
@@ -159,6 +130,7 @@ class FileDataMatcher implements ArgumentMatcher<FileData> {
                 test.getChangeTime().equals(test.getChangeTime()) &&
                 test.getSize().equals(argument.getSize());
     }
-
-
 }
+
+
+

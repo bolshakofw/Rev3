@@ -35,8 +35,8 @@ public class Controller {
     @PostMapping
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
-    public void upload(MultipartFile file) throws IOException {
-        fileService.upload(file);
+    public FileData upload(MultipartFile file) throws IOException {
+        return fileService.upload(file);
     }
 
     //Удаление

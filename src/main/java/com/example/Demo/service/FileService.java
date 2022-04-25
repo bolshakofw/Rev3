@@ -38,7 +38,6 @@ public class FileService {
     public FileService(FileRepo fileRepo, FileStorage fileStorage) {
         this.fileRepo = fileRepo;
         this.fileStorage = fileStorage;
-
     }
 
 
@@ -51,23 +50,28 @@ public class FileService {
             throw new EmptyFieldException("Empty filename or file not received");
         }
         FileData fileData = new FileData();
+
+        fileData.setUuid(UUID.randomUUID());
         fileData.setFileName(file.getOriginalFilename());
         fileData.setFileType(file.getContentType());
         fileData.setSize(file.getSize());
         fileData.setLoadTime(new Timestamp(System.currentTimeMillis()));
+        fileData.setFileDownloadUri("/api/file/download/" + fileData.getUuid().toString());
         fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
 
-        //fileData.setFileDownloadUri("/api/file/download/" + save.getUuid());
 
-        //file.transferTo(fileStorage.findFile(save);
-        return fileRepo.save(fileData);
+        file.transferTo(fileStorage.createFile(fileData.getUuid()));
+        fileRepo.save(fileData);
+
+        return fileData;
     }
 
     public void delete(UUID id) {
+
         fileStorage.checkExists(id);
         fileRepo.deleteById(id);
-        File localFile = fileStorage.findFile(id);
-        localFile.delete();
+        File file = fileStorage.createFile(id);
+        file.delete();
     }
 
     public List<String> list() {
@@ -121,16 +125,8 @@ public class FileService {
         }
     }
 
-
     public String getFileName(UUID uuid) {
         return fileRepo.getFileNameById(uuid)
                 .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
-
-
-    public byte[] getFile(UUID uuid) throws IOException {
-        fileStorage.checkExists(uuid);
-        return fileStorage.getFileBody(uuid);
-    }
-
 }
