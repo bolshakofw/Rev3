@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface FileRepo extends JpaRepository<FileData, UUID>, JpaSpecificationExecutor<FileData> {
 
     @Query("SELECT fileName from  FileData ")
-    public List<String> getFilenameList();
+    List<String> getFilenameList();
 
     @Query("SELECT fileName from FileData where uuid = :uuid")
     Optional<String> getFileNameById(UUID uuid);

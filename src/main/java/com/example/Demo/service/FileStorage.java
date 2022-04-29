@@ -18,7 +18,7 @@ public class FileStorage {
     private final FileRepo fileRepo;
 
 
-    @Value("${file.upload-dir}")
+    @Value("${upload.path}")
     public String fileUploadDir;
 
     @Autowired
@@ -27,17 +27,18 @@ public class FileStorage {
     }
 
 
-    public File createFile(UUID uuid) {
+    public File getOrCreateById(UUID uuid) {
         return new File(fileUploadDir + "/" + uuid);
     }
 
 
     public FileData getFileDataById(UUID uuid) {
-        return fileRepo.findById(uuid).orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
+        return fileRepo.findById(uuid)
+                .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
     }
 
 
-    public void checkExists(UUID uuid) {
+    public void checkExists(UUID uuid) { //uuid, то везде uuid
         if (!fileRepo.existsById(uuid))
             throw new FileDataNotFoundException("File data with id: " + uuid + " not found");
     }

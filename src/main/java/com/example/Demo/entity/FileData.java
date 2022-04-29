@@ -1,22 +1,26 @@
 package com.example.Demo.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.sql.Timestamp;
 import java.util.UUID;
 
 
-@Data
+@Getter
+@Setter
 @Entity
-@NoArgsConstructor
+// todo сделать DTO *
 public class FileData {
 
+    //todo починить генератор *
     @Id
-//    @GeneratedValue(generator = "UUID")
-//    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     private UUID uuid;
 
     private String fileName;
@@ -29,7 +33,9 @@ public class FileData {
 
     private Timestamp changeTime;
 
-    private String fileDownloadUri;
 
+    public FileData() {
+
+    }
 
 }

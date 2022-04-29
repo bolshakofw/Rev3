@@ -1,11 +1,13 @@
 package com.example.Demo.controller;
 
 
+import com.example.Demo.dto.FileDataDto;
 import com.example.Demo.entity.FileData;
 import com.example.Demo.service.FileService;
 import com.example.Demo.service.FileStorage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +20,23 @@ import java.util.UUID;
 
 @RequestMapping("/api/file")
 @RestController
-
-public class Controller {
+// todo название *
+@RequiredArgsConstructor
+public class FileController {
 
 
     private final FileStorage fileStorage;
 
     private final FileService fileService;
 
-    public Controller(FileStorage fileStorage, FileService fileService) {
-        this.fileStorage = fileStorage;
-        this.fileService = fileService;
+    // todo Lombok *
+
+
+    private static HttpHeaders createHeader(String fileName, int fileSize) {
+        HttpHeaders header = new HttpHeaders();
+        header.set("Content-Disposition", "attachment; filename=" + fileName);
+        header.setContentLength(fileSize);
+        return header;
     }
 
     //Загрузка файла
@@ -40,26 +48,25 @@ public class Controller {
     }
 
     //Удаление
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{uuid}")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Удаление файла", description = "Удаляет файл по UUID")
-    public void delete(@PathVariable("id") UUID uuid) {
+    public void delete(@PathVariable("uuid") UUID uuid) {
         fileService.delete(uuid);
     }
 
-
     //Скачивание одного файла
-    @GetMapping("/download/{id}")
+    @GetMapping("/download/{uuid}")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Скачивание файла", description = "Скачивает файл по UUID")
-    public HttpEntity<byte[]> download(@PathVariable UUID id) throws IOException {
-        byte[] body = fileStorage.getFileBody(id);
+    public HttpEntity<byte[]> download(@PathVariable UUID uuid) throws IOException {
+        byte[] body = fileStorage.getFileBody(uuid);
         return new HttpEntity<>(
                 body,
-                createHeader(fileService.getFileName(id), body.length)
+
+                createHeader(fileService.getFileName(uuid), body.length)
         );
     }
-
 
     //Скачивание архива файлов
     @GetMapping("/download/zip")
@@ -74,21 +81,14 @@ public class Controller {
 
     }
 
-    private HttpHeaders createHeader(String fileName, int fileSize) {
-        HttpHeaders header = new HttpHeaders();
-        header.set("Content-Disposition", "attachment; filename=" + fileName);
-        header.setContentLength(fileSize);
-        return header;
-    }
-
     @GetMapping("/filter")
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Список файлов", description = "Выводит список моделей всех файлов")
-    public List<FileData> filterr(@RequestParam(required = false, name = "fileName") String fileName,
-                                  @RequestParam(required = false, name = "fileType") String fileType,
-                                  @RequestParam(required = false, name = "from") Long from,
-                                  @RequestParam(required = false, name = "till") Long till) {
-        return fileService.filter(fileName, fileType, from, till);
+    public List<FileDataDto> filterr(@RequestParam(required = false, name = "fileName") String fileName,
+                                     @RequestParam(required = false, name = "fileType") String fileType,
+                                     @RequestParam(required = false, name = "from") Long from,
+                                     @RequestParam(required = false, name = "till") Long till) {
+        return fileService.filter(fileName.toLowerCase(), fileType.toLowerCase(), from, till);
     }
 
     //Список имён
@@ -99,12 +99,13 @@ public class Controller {
         return fileService.list();
     }
 
+
     //Изменение имени
-    @PutMapping("/{id}")
+    @PutMapping("/{uuid}")
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Изменение имени файла", description = "Изменяет имя файла по его UUID")
-    public void change(@PathVariable UUID id, @RequestParam String fileName) {
-        fileService.updateName(id, fileName);
+    public void change(@PathVariable UUID uuid, @RequestParam String fileName) {
+        fileService.updateName(uuid, fileName);
     }
 
 
