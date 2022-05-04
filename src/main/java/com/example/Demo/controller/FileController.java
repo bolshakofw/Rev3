@@ -20,17 +20,10 @@ import java.util.UUID;
 
 @RequestMapping("/api/file")
 @RestController
-// todo название *
 @RequiredArgsConstructor
 public class FileController {
-
-
     private final FileStorage fileStorage;
-
     private final FileService fileService;
-
-    // todo Lombok *
-
 
     private static HttpHeaders createHeader(String fileName, int fileSize) {
         HttpHeaders header = new HttpHeaders();
@@ -39,6 +32,7 @@ public class FileController {
         return header;
     }
 
+    //todo в javadoc
     //Загрузка файла
     @PostMapping
     @Tag(name = "Файлы", description = "Действия с файлами")
@@ -52,7 +46,7 @@ public class FileController {
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Удаление файла", description = "Удаляет файл по UUID")
     public void delete(@PathVariable("uuid") UUID uuid) {
-        fileService.delete(uuid);
+        fileService.deleteFile(uuid);
     }
 
     //Скачивание одного файла
@@ -63,7 +57,6 @@ public class FileController {
         byte[] body = fileStorage.getFileBody(uuid);
         return new HttpEntity<>(
                 body,
-
                 createHeader(fileService.getFileName(uuid), body.length)
         );
     }
@@ -88,7 +81,7 @@ public class FileController {
                                      @RequestParam(required = false, name = "fileType") String fileType,
                                      @RequestParam(required = false, name = "from") Long from,
                                      @RequestParam(required = false, name = "till") Long till) {
-        return fileService.filter(fileName.toLowerCase(), fileType.toLowerCase(), from, till);
+        return fileService.filter(fileName, fileType, from, till);
     }
 
     //Список имён

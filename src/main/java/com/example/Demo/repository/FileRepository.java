@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface FileRepo extends JpaRepository<FileData, UUID>, JpaSpecificationExecutor<FileData> {
+public interface FileRepository extends JpaRepository<FileData, UUID>, JpaSpecificationExecutor<FileData> {
 
     @Query("SELECT fileName from  FileData ")
     List<String> getFilenameList();

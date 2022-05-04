@@ -2,16 +2,17 @@ package com.example.Demo;
 
 
 import com.example.Demo.entity.FileData;
-import com.example.Demo.exception.FileDataNotFoundException;
-import com.example.Demo.exception.InvalidFileSizeException;
-import com.example.Demo.exception.InvalidFileTypeException;
-import com.example.Demo.repository.FileRepo;
+import com.example.Demo.errors.exception.FileDataNotFoundException;
+import com.example.Demo.errors.exception.InvalidFileTypeException;
+import com.example.Demo.repository.FileRepository;
 import com.example.Demo.service.FileService;
 import com.example.Demo.service.FileStorage;
+import com.example.Demo.utils.model.FileDataMatcher;
+import com.example.Demo.utils.model.FileFake;
+import com.example.Demo.utils.model.MultiFake;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.UUID;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
@@ -38,7 +40,7 @@ public class Testing {
     private FileStorage fileStorage;
 
     @Mock
-    private FileRepo fileRepo;
+    private FileRepository fileRepository;
 
 
     @Test
@@ -58,7 +60,7 @@ public class Testing {
 
         fileService.upload(fake);
 
-        verify(fileRepo).save(argThat(new FileDataMatcher(fileData1)));
+        verify(fileRepository).save(argThat(new FileDataMatcher(fileData1)));
     }
 
 
@@ -71,31 +73,35 @@ public class Testing {
         }).isInstanceOf(InvalidFileTypeException.class);
     }
 
-    @Test
-    @DisplayName("Ошибка размера файла")
-    void wrongFileSize() {
-        MockMultipartFile mfile = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, new byte[16 * 1024 * 1024]);
-        assertThatThrownBy(() -> {
-            fileService.upload(mfile);
-        }).isInstanceOf(InvalidFileSizeException.class).hasMessageContaining("The file size is more than");
-    }
+//    @Test
+//    @DisplayName("Ошибка размера файла")
+//    void wrongFileSize() {
+//        MockMultipartFile mfile = new MockMultipartFile("test", "test.txt", MediaType.TEXT_PLAIN_VALUE, new byte[16 * 1024 * 1024]);
+//        assertThatThrownBy(() -> {
+//            fileService.upload(mfile);
+//        }).isInstanceOf(InvalidFileSizeException.class).hasMessageContaining("The file size is more than");
+//    }
 
 
     @Test
     @DisplayName("Удаление файла")
-        //Переделатть
+        //Переделать
     void testDelete() {
         UUID uuid = UUID.randomUUID();
-        assertThatThrownBy(() -> {
-            fileService.delete(uuid);
-        }).isInstanceOf(FileDataNotFoundException.class);
+        Mockito.when(fileStorage.getOrCreateById(uuid)).thenReturn(new FileFake());
+        fileService.deleteFile(uuid);
+        verify(fileStorage).checkExists(uuid);
+        verify(fileRepository).deleteById(uuid);
+        verify(fileStorage).getOrCreateById(uuid);
+
     }
 
     @Test
     @DisplayName("Список имён файлов")
     void testGetNames() {
         fileService.list();
-        verify(fileRepo).getFilenameList();
+
+        verify(fileRepository).getFilenameList();
     }
 
     @Test
@@ -110,37 +116,25 @@ public class Testing {
     @Test
     void updateNameTest() {
         UUID uuid = UUID.randomUUID();
-        String fileName = "filename.png";
+        String fileName = "filename";
         FileData fileData = new FileData();
-        fileData.setFileName("Somename.hshs");
+        fileData.setFileName("Somename.png");
+        String fileDataType = ".png";
+
         Mockito.when(fileStorage.getFileDataById(uuid)).thenReturn(fileData);
         fileService.updateName(uuid, fileName);
-        Mockito.verify(fileRepo).save(fileData);
+        verify(fileRepository).save(fileData);
+
+        assertThat(fileData.getChangeTime()).isNotNull();
+        assertThat(fileName + fileDataType).isEqualTo(fileData.getFileName());
+
     }
 
 }
 
 //update
 
-class FileDataMatcher implements ArgumentMatcher<FileData> {
 
-    private final FileData test;
-
-    public FileDataMatcher(FileData fileData1) {
-        this.test = fileData1;
-    }
-
-
-    @Override
-    public boolean matches(FileData argument) {
-
-        return test.getFileName().equals(argument.getFileName()) &&
-                test.getFileType().equals(argument.getFileType()) &&
-                test.getLoadTime().equals(test.getLoadTime()) &&
-                test.getChangeTime().equals(test.getChangeTime()) &&
-                test.getSize().equals(argument.getSize());
-    }
-}
 
 
 

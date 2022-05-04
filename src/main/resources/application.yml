@@ -1,11 +1,15 @@
 spring:
+  security:
+    user:
+      name: Andrew
+      password: 12345
   datasource:
     url: jdbc:postgresql://localhost:5432/filebase
     username: postgres
     password: Nevslomat16
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
 
     show-sql: true
 
@@ -16,4 +20,3 @@ spring:
 
 upload:
   path: C:/Users/karimullin-ai/uploads
-

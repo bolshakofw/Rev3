@@ -10,6 +10,7 @@ import java.util.UUID;
 @Data
 public class FileDataDto {
 
+    public static final String BASE_DOWNLOAD_PATH = "/api/file/download/";
     private UUID uuid;
     private String fileName;
     private String fileType;
@@ -25,7 +26,7 @@ public class FileDataDto {
         this.size = fileData.getSize();
         this.upload = fileData.getLoadTime();
         this.change = fileData.getChangeTime();
-        this.link = "/api/file/download/" + fileData.getUuid().toString();
+        this.link = BASE_DOWNLOAD_PATH + fileData.getUuid().toString();
     }
 
 

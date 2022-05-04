@@ -1,4 +1,4 @@
-package com.example.Demo.exception;
+package com.example.Demo.errors.exception;
 
 public class InvalidFileSizeException extends RuntimeException {
     public InvalidFileSizeException(String message) {

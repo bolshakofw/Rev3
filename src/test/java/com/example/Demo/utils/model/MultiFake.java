@@ -1,4 +1,4 @@
-package com.example.Demo;
+package com.example.Demo.utils.model;
 
 import org.springframework.mock.web.MockMultipartFile;
 

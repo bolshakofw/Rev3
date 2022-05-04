@@ -1,12 +1,13 @@
 package com.example.Demo.service;
 
 import com.example.Demo.dto.FileDataDto;
-import com.example.Demo.dto.FileDataJpa;
 import com.example.Demo.entity.FileData;
-import com.example.Demo.exception.EmptyFieldException;
-import com.example.Demo.exception.FileDataNotFoundException;
-import com.example.Demo.exception.InvalidFileTypeException;
-import com.example.Demo.repository.FileRepo;
+import com.example.Demo.entity.FileData_;
+import com.example.Demo.errors.exception.EmptyFieldException;
+import com.example.Demo.errors.exception.FileDataNotFoundException;
+import com.example.Demo.errors.exception.InvalidFileTypeException;
+import com.example.Demo.repository.FileRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,19 +27,15 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Service
+@RequiredArgsConstructor
 public class FileService {
     private static final List<String> CONTENT_TYPES = List.of("image/png", "image/jpeg", "image/gif", "text/plain", "pdf/application");
 
-    private final FileRepo fileRepo;
+    private final FileRepository fileRepo;
     private final FileStorage fileStorage;
 
-    public FileService(FileRepo fileRepo, FileStorage fileStorage) {
-        this.fileRepo = fileRepo;
-        this.fileStorage = fileStorage;
-    }
 
     public FileData upload(MultipartFile file) throws IOException {
-        //todo оставить только в настройках*
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
             throw new InvalidFileTypeException(file.getContentType() + " not a valid file type , supported file types " + CONTENT_TYPES);
         } else if (!StringUtils.hasLength(file.getOriginalFilename())) {
@@ -46,28 +43,22 @@ public class FileService {
         }
 
         FileData fileData = new FileData();
-        //todo заменить на генератор *
-
         fileData.setFileName(file.getOriginalFilename());
         fileData.setFileType(file.getContentType());
         fileData.setSize(file.getSize());
-        fileData.setLoadTime(new Timestamp(System.currentTimeMillis()));
-
-        fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
+        Timestamp loadTime = new Timestamp(System.currentTimeMillis());
+        fileData.setLoadTime(loadTime);
+        fileData.setChangeTime(loadTime);
 
         fileRepo.save(fileData);
-        //fileData.setFileDownloadUri("/api/file/download/" + fileData.getUuid().toString());
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
-
         return fileData;
     }
 
-    public void delete(UUID uuid) {
-
+    public void deleteFile(UUID uuid) {
         fileStorage.checkExists(uuid);
         fileRepo.deleteById(uuid);
         File file = fileStorage.getOrCreateById(uuid);
-
         file.delete();
     }
 
@@ -77,15 +68,13 @@ public class FileService {
 
 
     public void updateName(UUID id, String fileName) {
-
-        fileStorage.checkExists(id); //todo переделать проверку на существование *
+        fileStorage.checkExists(id);
         FileData fileData = fileStorage.getFileDataById(id);
-        String type = fileData.getFileName().substring(fileData.getFileName().lastIndexOf(".") + 1);
-        fileData.setFileName(fileName + "." + type);
+        String oldName = fileData.getFileName();
+        String type = oldName.substring(oldName.lastIndexOf("."));
+        fileData.setFileName(fileName + type);
         fileData.setChangeTime(new Timestamp(System.currentTimeMillis()));
         fileRepo.save(fileData);
-
-
     }
 
     public List<FileDataDto> filter(String name, String type, Long from, Long till) {
@@ -97,17 +86,15 @@ public class FileService {
     private Specification<FileData> getFileDataSpecification(String name, String type, Long from, Long till) {
         return (root, query, builder) -> {
             List<Predicate> list = new LinkedList<>();
-
-
-            if (StringUtils.hasLength(name)) //todo JPAModelGen *
-                list.add(builder.like(root.get(FileDataJpa.FILE_NAME), "%" + name + "%")); //todo toLower*
+            if (StringUtils.hasLength(name))
+                list.add(builder.like(builder.lower(root.get(FileData_.FILE_NAME)), "%" + name.toLowerCase() + "%"));
             if (StringUtils.hasLength(type))
-                list.add(builder.like(root.get(FileDataJpa.FILE_TYPE), "%" + type + "%"));
+                list.add(builder.like(builder.lower(root.get(FileData_.FILE_TYPE)), "%" + type.toLowerCase() + "%"));
             if (!Objects.isNull(from))
-                list.add(builder.greaterThan(root.get(FileDataJpa.CHANGE_TIME), new Timestamp(from)));
+                list.add(builder.greaterThan(root.get(FileData_.CHANGE_TIME), new Timestamp(from)));
             if (!Objects.isNull(till))
-                list.add(builder.lessThan(root.get(FileDataJpa.CHANGE_TIME), new Timestamp(till)));
-            return builder.and(list.toArray(Predicate[]::new)); //todo сузить выборку *
+                list.add(builder.lessThan(root.get(FileData_.CHANGE_TIME), new Timestamp(till)));
+            return builder.and(list.toArray(Predicate[]::new));
         };
 
     }
@@ -129,6 +116,6 @@ public class FileService {
 
     public String getFileName(UUID uuid) {
         return fileRepo.getFileNameById(uuid)
-                .orElseThrow(() -> new FileDataNotFoundException("File with id: " + uuid + " not found"));
+                .orElseThrow(() -> FileDataNotFoundException.withUuid(uuid));
     }
 }

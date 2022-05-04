@@ -1,10 +1,10 @@
-package com.example.Demo.exception.handler;
+package com.example.Demo.errors;
 
 import com.example.Demo.dto.ExceptionDto;
-import com.example.Demo.exception.EmptyFieldException;
-import com.example.Demo.exception.FileDataNotFoundException;
-import com.example.Demo.exception.InvalidFileSizeException;
-import com.example.Demo.exception.InvalidFileTypeException;
+import com.example.Demo.errors.exception.EmptyFieldException;
+import com.example.Demo.errors.exception.FileDataNotFoundException;
+import com.example.Demo.errors.exception.InvalidFileSizeException;
+import com.example.Demo.errors.exception.InvalidFileTypeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
