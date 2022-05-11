@@ -4,6 +4,7 @@ spring:
       name: Andrew
       password: 12345
   datasource:
+# todo поднять бд в докере
     url: jdbc:postgresql://localhost:5432/filebase
     username: postgres
     password: Nevslomat16

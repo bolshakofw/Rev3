@@ -10,6 +10,8 @@ public class SwaggerConfig {
     /*
     java & maven HOME
      */
+
+    // todo сделать сваггер доступным без авторизации + добавить авторизацию в сваггер
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info()

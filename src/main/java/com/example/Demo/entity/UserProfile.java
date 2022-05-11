@@ -13,7 +13,8 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-public class MyUser {
+public class UserProfile {
+
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")

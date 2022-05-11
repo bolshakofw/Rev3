@@ -15,10 +15,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
     }
 
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("Andrew").password("12345").roles("ADMIN");
-        auth.inMemoryAuthentication().withUser("Otto").password("qwerty").roles("USER");
+        auth.inMemoryAuthentication().withUser("Andrew").password("12345").roles("ADMIN")
+                .and()
+                .withUser("Otto").password("qwerty").roles("USER");
     }
 
     // для всего приложения
@@ -37,9 +39,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     // в зависимости от роли
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
-        http.authorizeRequests().antMatchers("/rest/**").hasAnyRole("ADMIN").anyRequest()
-                .fullyAuthenticated().and()
+        http.cors().disable() // todo read
+                .csrf().disable() // todo read
+                .authorizeRequests()
+                .antMatchers("/rest/**").hasAnyRole("ADMIN")
+                .anyRequest().fullyAuthenticated()
+                .and()
                 .httpBasic();
     }
 
