@@ -34,7 +34,7 @@ public class FileStorage {
     }
 
 
-    public void checkExists(UUID uuid) { //uuid, то везде uuid
+    public void checkExists(UUID uuid) {
         if (!fileRepo.existsById(uuid))
             throw FileDataNotFoundException.withUuid(uuid);
     }

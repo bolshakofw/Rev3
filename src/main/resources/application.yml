@@ -6,8 +6,8 @@ spring:
   datasource:
 # todo поднять бд в докере
     url: jdbc:postgresql://localhost:5432/filebase
-    username: postgres
-    password: Nevslomat16
+    username: admin
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: update

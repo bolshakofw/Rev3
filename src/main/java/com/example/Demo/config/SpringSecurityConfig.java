@@ -16,12 +16,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication().withUser("Andrew").password("12345").roles("ADMIN")
-                .and()
-                .withUser("Otto").password("qwerty").roles("USER");
-    }
+//    @Override
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.inMemoryAuthentication().withUser("Andrew").password("12345").roles("ADMIN")
+//                .and()
+//                .withUser("Otto").password("qwerty").roles("USER");
+//    }
 
     // для всего приложения
 //    @Override
@@ -33,7 +33,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 //    @Override
 //    protected void configure(HttpSecurity http) throws Exception {
 //        http.csrf().disable();
-//        http.authorizeRequests().antMatchers("/rest/**").fullyAuthenticated().and().httpBasic();
+//        http.authorizeRequests().antMatchers("/api/file/**").fullyAuthenticated().and().httpBasic();
 //    }
 
     // в зависимости от роли
@@ -42,7 +42,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().disable() // todo read
                 .csrf().disable() // todo read
                 .authorizeRequests()
-                .antMatchers("/rest/**").hasAnyRole("ADMIN")
+                .antMatchers("/api/**").hasAnyRole("ADMIN")
                 .anyRequest().fullyAuthenticated()
                 .and()
                 .httpBasic();
