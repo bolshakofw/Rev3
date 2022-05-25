@@ -15,10 +15,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Role {
-    private static final List<String> ROLES = List.of("ADMIN","USER");
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private short id;
+    private long id;
+
     private String role;
 
 }

@@ -1,51 +1,53 @@
 package com.example.Demo.config;
 
 
+import com.example.Demo.service.CustomUserDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
+@RequiredArgsConstructor
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
+
+
+    private CustomUserDetailsService customUserDetailsService;
+
     @Bean
-    public static NoOpPasswordEncoder passwordEncoder() {
-        return (NoOpPasswordEncoder) NoOpPasswordEncoder.getInstance();
+    PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-//        auth.inMemoryAuthentication().withUser("Andrew").password("12345").roles("ADMIN")
-//                .and()
-//                .withUser("Otto").password("qwerty").roles("USER");
-//    }
-
-    // для всего приложения
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
-//        http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
-//    }
-    //только для ссылок
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable();
-//        http.authorizeRequests().antMatchers("/api/file/**").fullyAuthenticated().and().httpBasic();
-//    }
-
-    // в зависимости от роли
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().disable() // todo read
-                .csrf().disable() // todo read
+        http
+                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/**").hasAnyRole("ADMIN")
-                .anyRequest().fullyAuthenticated()
+                .antMatchers(HttpMethod.POST, "/api/**").permitAll()
+                .anyRequest()
+                .authenticated()
                 .and()
                 .httpBasic();
     }
 
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+            auth.userDetailsService(userDetailsService())
+                .passwordEncoder(passwordEncoder());
+    }
+
+
+    @Override
+    @Bean
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 }
