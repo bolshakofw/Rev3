@@ -7,7 +7,6 @@ import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -60,10 +59,10 @@ public class AuthController {
         userProfile.setName(signUpDto.getName());
         userProfile.setUsername(signUpDto.getUsername());
         userProfile.setEmail(signUpDto.getEmail());
-        userProfile.setPassword(signUpDto.getPassword());
+        userProfile.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
 
-//        Role roles = roleRepository.findByRole("ROLE_ADMIN").get();
-//        userProfile.setRoles(Collections.singleton(roles));
+        Role roles = roleRepository.findByRole("ROLE_ADMIN").get();
+        userProfile.setRoles(Collections.singleton(roles));
 
         userRepository.save(userProfile);
 
