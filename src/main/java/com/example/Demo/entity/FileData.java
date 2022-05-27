@@ -5,10 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -33,5 +30,9 @@ public class FileData {
     private Timestamp loadTime;
 
     private Timestamp changeTime;
+
+    @ManyToOne
+    @JoinColumn(name = "user_profile_uuid")
+    private UserProfile userProfile;
 
 }

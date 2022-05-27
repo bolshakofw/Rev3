@@ -1,14 +1,21 @@
 package com.example.Demo.service;
 
+import com.example.Demo.config.SpringSecurityConfig;
+import com.example.Demo.controller.AuthController;
 import com.example.Demo.dto.FileDataDto;
 import com.example.Demo.entity.FileData;
 import com.example.Demo.entity.FileData_;
+import com.example.Demo.entity.UserProfile;
+import com.example.Demo.entity.UserProfile_;
 import com.example.Demo.errors.exception.EmptyFieldException;
 import com.example.Demo.errors.exception.FileDataNotFoundException;
 import com.example.Demo.errors.exception.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,7 +40,8 @@ public class FileService {
 
     private final FileRepository fileRepo;
     private final FileStorage fileStorage;
-
+    private final CustomUserDetailsService customUserDetailsService;
+    private final AuthService authService;
 
     public FileData upload(MultipartFile file) throws IOException {
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
@@ -42,6 +50,11 @@ public class FileService {
             throw new EmptyFieldException("Empty filename or file not received");
         }
 
+
+
+
+
+
         FileData fileData = new FileData();
         fileData.setFileName(file.getOriginalFilename());
         fileData.setFileType(file.getContentType());
@@ -49,6 +62,7 @@ public class FileService {
         Timestamp loadTime = new Timestamp(System.currentTimeMillis());
         fileData.setLoadTime(loadTime);
         fileData.setChangeTime(loadTime);
+
 
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));

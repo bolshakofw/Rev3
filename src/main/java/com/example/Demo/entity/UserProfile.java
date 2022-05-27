@@ -44,4 +44,7 @@ public class UserProfile {
 
     private boolean acces;
 
+    @ManyToOne
+    @JoinColumn(name = "file_uuid")
+    private FileData file;
 }
