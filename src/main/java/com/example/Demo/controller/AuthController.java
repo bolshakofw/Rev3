@@ -25,10 +25,13 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto) {
-       return authService.signup(signUpDto);
+        return authService.signup(signUpDto);
     }
 
-
+    @GetMapping("/getUser")
+    public UserProfile getUser() {
+        return authService.getUserByUsernameOrEmail();
+    }
 
 
 }

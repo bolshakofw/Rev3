@@ -37,7 +37,7 @@ public class FileController {
     @PostMapping
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
-    public FileData upload(MultipartFile file) throws IOException {
+    public String upload(MultipartFile file) throws IOException {
         return fileService.upload(file);
     }
 
