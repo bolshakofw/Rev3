@@ -19,7 +19,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.sql.Timestamp;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -60,16 +62,15 @@ public class AuthService {
         userProfile.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
         userProfile.setAcces(true);
 
-        if (!roles.contains("ADMIN") && roleRepository.findByRole("ADMIN").isPresent()) {
-            Role role = roleRepository.findByRole("ADMIN").get();
+        if (!roles.contains("ROLE_ADMIN") && roleRepository.findByRole("ROLE_ADMIN").isPresent()) {
+            Role role = roleRepository.findByRole("ROLE_ADMIN").get();
             userProfile.setRoles(Collections.singleton(role));
-            roles.add("ADMIN");
-        } else if (roles.contains("ADMIN") && roleRepository.findByRole("USER").isPresent()) {
-            Role role = roleRepository.findByRole("USER").get();
+            roles.add("ROLE_ADMIN");
+        } else if (roles.contains("ROLE_ADMIN") && roleRepository.findByRole("ROLE_USER").isPresent()) {
+            Role role = roleRepository.findByRole("ROLE_USER").get();
             userProfile.setRoles(Collections.singleton(role));
-            roles.add("USER");
+            roles.add("ROLE_USER");
         }
-
 
         userRepository.save(userProfile);
 
@@ -87,25 +88,11 @@ public class AuthService {
     }
 
 
-    public void accessUserCheck() {
-        if (roleRepository.findByRole("USER").isPresent()) {
-            Role role = roleRepository.findByRole("USER").get();
-
-            if (!getUserByUsernameOrEmail().getRoles().contains(role) || !getUserByUsernameOrEmail().isAcces()) {
-                throw  new PermissionException("Админу не доступна выбранная функция или доступ ограничен");
-            }
-        }
-    }
-
-
-    public void accessAdminCheck(){
-        if (roleRepository.findByRole("ADMIN").isPresent()) {
-            Role role = roleRepository.findByRole("ADMIN").get();
-
-            if (!getUserByUsernameOrEmail().getRoles().contains(role) || !getUserByUsernameOrEmail().isAcces()) {
-                throw  new PermissionException("Пользователю недоступна выбранная функция или доступ ограничен");
-            }
-        }
+    public void changePass(String newpas){
+        UserProfile userProfile = getUserByUsernameOrEmail();
+        userProfile.setPassword(newpas);
+        userProfile.setPasschange(new Timestamp(System.currentTimeMillis()));
+        userRepository.save(userProfile);
     }
 
 

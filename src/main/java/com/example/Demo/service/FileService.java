@@ -1,31 +1,28 @@
 package com.example.Demo.service;
 
-import com.example.Demo.config.SpringSecurityConfig;
-import com.example.Demo.controller.AuthController;
 import com.example.Demo.dto.FileDataDto;
-import com.example.Demo.entity.*;
+import com.example.Demo.entity.FileData;
+import com.example.Demo.entity.FileData_;
+import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.EmptyFieldException;
 import com.example.Demo.errors.exception.FileDataNotFoundException;
 import com.example.Demo.errors.exception.InvalidFileTypeException;
-import com.example.Demo.errors.exception.permission.PermissionException;
 import com.example.Demo.repository.FileRepository;
-import com.example.Demo.repository.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.criteria.Predicate;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -37,14 +34,13 @@ public class FileService {
 
     private final FileRepository fileRepo;
     private final FileStorage fileStorage;
-    private final CustomUserDetailsService customUserDetailsService;
+
+
     private final AuthService authService;
 
-    private final RoleRepository roleRepository;
 
     public String upload(MultipartFile file) throws IOException {
 
-        authService.accessUserCheck();
 
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
             throw new InvalidFileTypeException(file.getContentType() + " not a valid file type , supported file types " + CONTENT_TYPES);
@@ -70,7 +66,6 @@ public class FileService {
 
     public void deleteFile(UUID uuid) {
 
-        authService.accessUserCheck();
 
         fileStorage.checkExists(uuid);
         fileRepo.deleteById(uuid);
@@ -85,7 +80,6 @@ public class FileService {
 
     public void updateName(UUID id, String fileName) {
 
-        authService.accessUserCheck();
 
         fileStorage.checkExists(id);
         FileData fileData = fileStorage.getFileDataById(id);

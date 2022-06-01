@@ -19,6 +19,14 @@ spring:
     multipart:
       max-file-size:
         15MB
+  flyway:
+    locations: src/main/resources/db/migration/
+    user: postgres
+    password: Nevslomat16
+    enabled: false
+
+
+
 
 upload:
   path: C:/Users/karimullin-ai/uploads

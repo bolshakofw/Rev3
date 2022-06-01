@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -28,9 +26,9 @@ public class AuthController {
         return authService.signup(signUpDto);
     }
 
-    @GetMapping("/getUser")
-    public UserProfile getUser() {
-        return authService.getUserByUsernameOrEmail();
+    @PutMapping("/changepass/{pass}")
+    public void changepass(String pass){
+        authService.changePass(pass);
     }
 
 

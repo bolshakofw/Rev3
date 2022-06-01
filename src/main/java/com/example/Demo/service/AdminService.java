@@ -20,28 +20,16 @@ public class AdminService {
 
     private AuthService authService;
 
-//
-//    public void makeAdmin(String username){
-//        if(userRepository.findByUsername(username).isPresent() && roleRepository.findByRole("ADMIN").isPresent() && roleRepository.findByRole("USER").isPresent()){
-//            UserProfile user = userRepository.findByUsername(username).get();
-//            Role role = roleRepository.findByRole("ADMIN").get();
-//            Role role1 = roleRepository.findByRole("USER").get();
-//            user.deleteRole(role1);
-//            user.addRole(role);
-//        }
-//    }
+    public void blockUser(String username) {
 
-
-    public void blockUser(String username){
-        authService.accessAdminCheck();
         UserProfile userProfile = userRepository.findByUsername(username).get();
 
         userProfile.setAcces(false);
         userRepository.save(userProfile);
     }
 
-    public void unblockUser(String username){
-        authService.accessAdminCheck();
+    public void unblockUser(String username) {
+
         UserProfile userProfile = userRepository.findByUsername(username).get();
 
         userProfile.setAcces(true);
@@ -49,21 +37,20 @@ public class AdminService {
     }
 
 
-    public void makeGod(String username){
-        authService.accessAdminCheck();
+    public void op(String username) {
+
         UserProfile userProfile = userRepository.findByUsername(username).get();
-        Role role = roleRepository.findByRole("ADMIN").get();
+        Role role = roleRepository.findByRole("ROLE_ADMIN").get();
         Set<Role> roles = userProfile.getRoles();
-        //roles.clear();
         roles.add(role);
         userRepository.save(userProfile);
 
     }
 
-    public void deOp(String username){
-        authService.accessAdminCheck();
+    public void deOp(String username) {
+
         UserProfile userProfile = userRepository.findByUsername(username).get();
-        Role role = roleRepository.findByRole("USER").get();
+        Role role = roleRepository.findByRole("ROLE_USER").get();
         Set<Role> roles = userProfile.getRoles();
         roles.clear();
         roles.add(role);

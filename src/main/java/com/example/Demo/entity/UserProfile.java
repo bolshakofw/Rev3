@@ -1,16 +1,12 @@
 package com.example.Demo.entity;
 
-import com.google.gwt.editor.client.Editor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Set;
 import java.util.UUID;
 

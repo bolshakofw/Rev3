@@ -2,9 +2,7 @@ package com.example.Demo.service;
 
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
-import com.example.Demo.entity.UserProfile_;
 import com.example.Demo.repository.UserRepository;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

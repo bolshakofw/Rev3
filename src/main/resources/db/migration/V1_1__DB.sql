@@ -1,10 +1,14 @@
-create table file_data
+create table user_profile
 (
-    uuid        uuid not null
+    uuid       uuid    not null
         primary key,
-    change_time timestamp,
-    file_name   varchar(255),
-    file_type   varchar(255),
-    load_time   timestamp,
-    size        bigint
+    acces      boolean not null,
+    email      varchar(255),
+    name       varchar(255),
+    passchange timestamp,
+    password   varchar(255),
+    username   varchar(255)
 );
+
+alter table user_profile
+    owner to postgres;
