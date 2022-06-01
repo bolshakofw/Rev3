@@ -90,7 +90,7 @@ public class AuthService {
 
     public void changePass(String newpas){
         UserProfile userProfile = getUserByUsernameOrEmail();
-        userProfile.setPassword(newpas);
+        userProfile.setPassword(passwordEncoder.encode(newpas));
         userProfile.setPasschange(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userProfile);
     }

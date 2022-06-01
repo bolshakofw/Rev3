@@ -27,7 +27,7 @@ public class AuthController {
     }
 
     @PutMapping("/changepass/{pass}")
-    public void changepass(String pass){
+    public void changepass(@PathVariable String pass){
         authService.changePass(pass);
     }
 
