@@ -1,3 +1,4 @@
+
 spring:
   security:
     user:
@@ -7,6 +8,9 @@ spring:
     # todo поднять бд в докере
     url: jdbc:postgresql://localhost:5432/filebase
     username: postgres
+    password: Nevslomat16
+  mail:
+    username: bolshakofw@gmail.com
     password: Nevslomat16
 
   jpa:
