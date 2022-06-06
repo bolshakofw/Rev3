@@ -9,7 +9,6 @@ import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.jws.soap.SOAPBinding;
 import java.util.Set;
 
 @Service
@@ -45,7 +44,7 @@ public class AdminService {
         Role role = roleRepository.findByRole("ROLE_ADMIN").get();
 
         Set<Role> roles = userProfile.getRoles();
-        if(roles.contains(role)){
+        if (roles.contains(role)) {
             throw new AdminException("Уже админ");
         }
 
@@ -59,7 +58,7 @@ public class AdminService {
     public void deOp(String username) {
         UserProfile currentUser = authService.getCurrentUser();
         UserProfile userProfile = userRepository.findByUsername(username).get();
-        if(currentUser.getAdmin().equals(userProfile)){
+        if (currentUser.getAdmin().equals(userProfile)) {
             throw new AdminException("Это твой батя");
         }
 

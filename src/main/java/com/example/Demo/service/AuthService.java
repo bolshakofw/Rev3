@@ -5,7 +5,6 @@ import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
-import com.example.Demo.errors.exception.permission.PermissionException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -28,16 +27,11 @@ import java.util.List;
 public class AuthService {
 
 
-    private AuthenticationManager authenticationManager;
-
-    private UserRepository userRepository;
-
-    private RoleRepository roleRepository;
-
-    private PasswordEncoder passwordEncoder;
-
-
     public List<String> roles;
+    private AuthenticationManager authenticationManager;
+    private UserRepository userRepository;
+    private RoleRepository roleRepository;
+    private PasswordEncoder passwordEncoder;
 
     public ResponseEntity<String> signin(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
@@ -89,7 +83,7 @@ public class AuthService {
     }
 
 
-    public void changePass(String newpas){
+    public void changePass(String newpas) {
         UserProfile userProfile = getCurrentUser();
         userProfile.setPassword(passwordEncoder.encode(newpas));
         userProfile.setPasschange(new Timestamp(System.currentTimeMillis()));

@@ -19,11 +19,11 @@ spring:
     multipart:
       max-file-size:
         15MB
-  flyway:
-    locations: src/main/resources/db/migration/
-    user: postgres
-    password: Nevslomat16
-    enabled: false
+#  flyway:
+##    locations: filesystem:db/migration
+#    user: postgres
+#    password: Nevslomat16
+
 
 
 

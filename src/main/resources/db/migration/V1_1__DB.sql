@@ -1,4 +1,4 @@
-create table user_profile
+create table user_profileUU
 (
     uuid       uuid    not null
         primary key,
