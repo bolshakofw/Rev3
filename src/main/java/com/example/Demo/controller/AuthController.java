@@ -3,7 +3,6 @@ package com.example.Demo.controller;
 
 import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
-import com.example.Demo.entity.UserProfile;
 import com.example.Demo.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +25,9 @@ public class AuthController {
         return authService.signup(signUpDto);
     }
 
-    @PutMapping("/changepass/{pass}")
-    public void changepass(@PathVariable String pass){
-        authService.changePass(pass);
+    @PutMapping("/changepassword")
+    public void changepassword(@RequestBody String password) {
+        authService.changePass(password);
     }
 
 

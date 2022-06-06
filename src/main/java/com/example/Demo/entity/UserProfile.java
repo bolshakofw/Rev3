@@ -45,4 +45,7 @@ public class UserProfile {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FileData> files;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private UserProfile admin;
 }

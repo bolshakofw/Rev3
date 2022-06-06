@@ -66,6 +66,7 @@ public class AuthService {
             Role role = roleRepository.findByRole("ROLE_ADMIN").get();
             userProfile.setRoles(Collections.singleton(role));
             roles.add("ROLE_ADMIN");
+            userProfile.setAdmin(userProfile);
         } else if (roles.contains("ROLE_ADMIN") && roleRepository.findByRole("ROLE_USER").isPresent()) {
             Role role = roleRepository.findByRole("ROLE_USER").get();
             userProfile.setRoles(Collections.singleton(role));
@@ -74,11 +75,11 @@ public class AuthService {
 
         userRepository.save(userProfile);
 
-        return new ResponseEntity<>("User registered successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Registered successfully", HttpStatus.OK);
     }
 
 
-    public UserProfile getUserByUsernameOrEmail() {
+    public UserProfile getCurrentUser() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userRepository.findByEmail(user.getUsername()).isPresent()) {
             return userRepository.findByEmail(user.getUsername()).get();
@@ -89,7 +90,7 @@ public class AuthService {
 
 
     public void changePass(String newpas){
-        UserProfile userProfile = getUserByUsernameOrEmail();
+        UserProfile userProfile = getCurrentUser();
         userProfile.setPassword(passwordEncoder.encode(newpas));
         userProfile.setPasschange(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userProfile);

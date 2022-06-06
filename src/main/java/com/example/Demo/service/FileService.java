@@ -56,7 +56,7 @@ public class FileService {
         Timestamp loadTime = new Timestamp(System.currentTimeMillis());
         fileData.setLoadTime(loadTime);
         fileData.setChangeTime(loadTime);
-        UserProfile currentUser = authService.getUserByUsernameOrEmail();
+        UserProfile currentUser = authService.getCurrentUser();
         fileData.setUserProfile(currentUser);
 
         fileRepo.save(fileData);
