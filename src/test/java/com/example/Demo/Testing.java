@@ -2,8 +2,8 @@ package com.example.Demo;
 
 
 import com.example.Demo.entity.FileData;
-import com.example.Demo.errors.exception.FileDataNotFoundException;
-import com.example.Demo.errors.exception.InvalidFileTypeException;
+import com.example.Demo.errors.exception.files.FileDataNotFoundException;
+import com.example.Demo.errors.exception.files.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepository;
 import com.example.Demo.service.FileService;
 import com.example.Demo.service.FileStorage;

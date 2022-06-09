@@ -1,4 +1,4 @@
-package com.example.Demo.service;
+package com.example.Demo.config;
 
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
@@ -29,7 +29,12 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserProfile userProfile = userRepository.findByUsernameOrEmail(username, username)
                 .orElseThrow(() ->
                         new UsernameNotFoundException("User not found with username or email:" + username));
-        return new User(userProfile.getEmail(), userProfile.getPassword(), mapRolesToAuthorities(userProfile.getRoles()));
+        return new User(userProfile.getEmail(),
+                userProfile.getPassword(),
+                userProfile.isAcces(),
+                true,
+                true,
+                userProfile.isAcces(), mapRolesToAuthorities(userProfile.getRoles()));
     }
 
     private Collection<? extends GrantedAuthority> mapRolesToAuthorities(Set<Role> roles) {

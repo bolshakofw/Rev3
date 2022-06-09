@@ -5,6 +5,7 @@ import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
+import com.example.Demo.errors.exception.users.ChangePassException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -85,7 +86,11 @@ public class AuthService {
 
     public void changePass(String newpas) {
         UserProfile userProfile = getCurrentUser();
-        userProfile.setPassword(passwordEncoder.encode(newpas));
+        String newEncodedPass = passwordEncoder.encode(newpas);
+        if (userProfile.getPassword().equals(newEncodedPass)){
+            throw new ChangePassException("Passwords are the same");
+        }
+        userProfile.setPassword(newEncodedPass);
         userProfile.setPasschange(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userProfile);
     }

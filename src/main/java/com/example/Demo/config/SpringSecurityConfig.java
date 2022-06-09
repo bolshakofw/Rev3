@@ -1,7 +1,6 @@
 package com.example.Demo.config;
 
 
-import com.example.Demo.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +30,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/file/*").hasAnyRole("USER")
+                .antMatchers("/api/file/download/**").permitAll()
+                .antMatchers("/api/file/**").hasAnyRole("USER")
                 .antMatchers("/api/admin/**").hasAnyRole("ADMIN")
-                .antMatchers("/api/file/donwload/**").permitAll()
-//                .antMatchers("/api/file/donwload/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()

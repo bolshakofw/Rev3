@@ -31,8 +31,7 @@ public class FileController {
         return header;
     }
 
-    //todo в javadoc
-    //Загрузка файла
+
     @PostMapping
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
@@ -40,7 +39,7 @@ public class FileController {
         return fileService.upload(file);
     }
 
-    //Удаление
+
     @DeleteMapping("/{uuid}")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Удаление файла", description = "Удаляет файл по UUID")
@@ -48,7 +47,7 @@ public class FileController {
         fileService.deleteFile(uuid);
     }
 
-    //Скачивание одного файла
+
     @GetMapping("/download/{uuid}")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Скачивание файла", description = "Скачивает файл по UUID")
@@ -60,7 +59,7 @@ public class FileController {
         );
     }
 
-    //Скачивание архива файлов
+
     @GetMapping("/download/zip")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Скачивание архива файлов", description = "Скачивает архив файлов по UUID")
@@ -83,7 +82,7 @@ public class FileController {
         return fileService.filter(fileName, fileType, from, till);
     }
 
-    //Список имён
+
     @GetMapping
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Список имён файлов", description = "Выводит список имён всех файлов")
@@ -92,7 +91,7 @@ public class FileController {
     }
 
 
-    //Изменение имени
+
     @PutMapping("/{uuid}")
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Изменение имени файла", description = "Изменяет имя файла по его UUID")

@@ -3,7 +3,7 @@ package com.example.Demo.service;
 
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
-import com.example.Demo.errors.exception.AdminException;
+import com.example.Demo.errors.exception.users.AdminException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -45,7 +45,7 @@ public class AdminService {
 
         Set<Role> roles = userProfile.getRoles();
         if (roles.contains(role)) {
-            throw new AdminException("Уже админ");
+            throw new AdminException("User is already admin");
         }
 
         roles.add(role);
@@ -59,7 +59,7 @@ public class AdminService {
         UserProfile currentUser = authService.getCurrentUser();
         UserProfile userProfile = userRepository.findByUsername(username).get();
         if (currentUser.getAdmin().equals(userProfile)) {
-            throw new AdminException("Это твой батя");
+            throw new AdminException("No permission to do this");
         }
 
         Role role = roleRepository.findByRole("ROLE_USER").get();

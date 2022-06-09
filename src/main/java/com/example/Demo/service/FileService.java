@@ -4,9 +4,9 @@ import com.example.Demo.dto.FileDataDto;
 import com.example.Demo.entity.FileData;
 import com.example.Demo.entity.FileData_;
 import com.example.Demo.entity.UserProfile;
-import com.example.Demo.errors.exception.EmptyFieldException;
-import com.example.Demo.errors.exception.FileDataNotFoundException;
-import com.example.Demo.errors.exception.InvalidFileTypeException;
+import com.example.Demo.errors.exception.files.EmptyFieldException;
+import com.example.Demo.errors.exception.files.FileDataNotFoundException;
+import com.example.Demo.errors.exception.files.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +35,7 @@ public class FileService {
     private final FileRepository fileRepo;
     private final FileStorage fileStorage;
 
+    private final MailService pochta;
 
     private final AuthService authService;
 
@@ -61,6 +62,7 @@ public class FileService {
 
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
+        pochta.sendEmail(currentUser.getEmail(),"File uploaded","Your file uploaded successfully");
         return "File uploaded successfully";
     }
 

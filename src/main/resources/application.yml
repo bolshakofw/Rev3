@@ -1,4 +1,3 @@
-
 spring:
   security:
     user:
@@ -9,24 +8,29 @@ spring:
     url: jdbc:postgresql://localhost:5432/filebase
     username: postgres
     password: Nevslomat16
+
   mail:
     username: bolshakofw@gmail.com
-    password: Nevslomat16
+    password: ogxjljvnoceotctv
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 
-
   servlet:
     multipart:
       max-file-size:
         15MB
-#  flyway:
-##    locations: filesystem:db/migration
-#    user: postgres
-#    password: Nevslomat16
 
 
 

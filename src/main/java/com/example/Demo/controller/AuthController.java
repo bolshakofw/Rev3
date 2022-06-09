@@ -25,8 +25,8 @@ public class AuthController {
         return authService.signup(signUpDto);
     }
 
-    @PutMapping("/changepassword")
-    public void changepassword(@RequestBody String password) {
+    @PutMapping("/changepassword/")
+    public void changepassword(@RequestParam String password) {
         authService.changePass(password);
     }
 
