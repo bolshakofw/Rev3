@@ -15,6 +15,7 @@ public class AuthController {
 
     private AuthService authService;
 
+    //todo в конфиг
     @PostMapping("/signin")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
         return authService.signin(loginDto);
@@ -22,6 +23,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignUpDto signUpDto) {
+        //todo вынести респонсентити в контроллер
         return authService.signup(signUpDto);
     }
 

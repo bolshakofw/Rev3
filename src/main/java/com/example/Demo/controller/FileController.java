@@ -91,7 +91,6 @@ public class FileController {
     }
 
 
-
     @PutMapping("/{uuid}")
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Изменение имени файла", description = "Изменяет имя файла по его UUID")

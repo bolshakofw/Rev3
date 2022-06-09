@@ -21,11 +21,13 @@ public class AdminService {
 
     private AuthService authService;
 
-    public void blockUser(String username) {
+    //todo объединить методы раз/блокировки
+    public void blockUser(String username, boolean acces) {
 
-        UserProfile userProfile = userRepository.findByUsername(username).get();
+        //todo убрать .get(), сделать orElseThrow()
+        UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
 
-        userProfile.setAcces(false);
+        userProfile.setAcces(acces);
         userRepository.save(userProfile);
     }
 
@@ -33,7 +35,7 @@ public class AdminService {
 
         UserProfile userProfile = userRepository.findByUsername(username).get();
 
-        userProfile.setAcces(true);
+        userProfile.setAcces/*todo s*/(true);
         userRepository.save(userProfile);
     }
 
@@ -49,6 +51,7 @@ public class AdminService {
         }
 
         roles.add(role);
+        //todo вынести обращение в базу за текущим юзером сюда
         userProfile.setAdmin(currentUser);
         userRepository.save(userProfile);
 

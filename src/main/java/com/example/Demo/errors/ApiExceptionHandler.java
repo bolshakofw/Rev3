@@ -54,24 +54,24 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler({UserNotFoundException.class})
-    public ResponseEntity<ExceptionDto> handleUserNotFoundException(Exception e){
-        log.warn("User with this username not found",e);
+    public ResponseEntity<ExceptionDto> handleUserNotFoundException(Exception e) {
+        log.warn("User with this username not found", e);
         return ResponseEntity
                 .badRequest()
                 .body(new ExceptionDto(e.getMessage()));
     }
 
     @ExceptionHandler({ChangePassException.class})
-    public ResponseEntity<ExceptionDto> handleChangePassException(Exception e){
-        log.warn("Passwords are the same",e);
+    public ResponseEntity<ExceptionDto> handleChangePassException(Exception e) {
+        log.warn("Passwords are the same", e);
         return ResponseEntity
                 .badRequest()
                 .body(new ExceptionDto(e.getMessage()));
     }
 
     @ExceptionHandler({AdminException.class})
-    public ResponseEntity<ExceptionDto> handleAdminException(Exception e){
-        log.warn("No permission",e);
+    public ResponseEntity<ExceptionDto> handleAdminException(Exception e) {
+        log.warn("No permission", e);
         return ResponseEntity
                 .badRequest()
                 .body(new ExceptionDto(e.getMessage()));

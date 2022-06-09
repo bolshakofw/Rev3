@@ -27,13 +27,14 @@ import java.util.List;
 @AllArgsConstructor
 public class AuthService {
 
-
+// todo убрать состояние, сделать определение админа через бд
     public List<String> roles;
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
+    //todo вынести в конфиги
     public ResponseEntity<String> signin(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
@@ -42,6 +43,7 @@ public class AuthService {
     }
 
     public ResponseEntity<String> signup(SignUpDto signUpDto) {
+        //todo через ошибки
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
@@ -70,11 +72,13 @@ public class AuthService {
 
         userRepository.save(userProfile);
 
+        //todo дто для успешных ответов
         return new ResponseEntity<>("Registered successfully", HttpStatus.OK);
     }
 
 
     public UserProfile getCurrentUser() {
+        //todo хранить всю нужную инфу в контексте
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userRepository.findByEmail(user.getUsername()).isPresent()) {
             return userRepository.findByEmail(user.getUsername()).get();
@@ -86,8 +90,9 @@ public class AuthService {
 
     public void changePass(String newpas) {
         UserProfile userProfile = getCurrentUser();
+        //todo pe.matches()
         String newEncodedPass = passwordEncoder.encode(newpas);
-        if (userProfile.getPassword().equals(newEncodedPass)){
+        if (userProfile.getPassword().equals(newEncodedPass)) {
             throw new ChangePassException("Passwords are the same");
         }
         userProfile.setPassword(newEncodedPass);

@@ -18,7 +18,7 @@ public class AdminController {
 
     @PutMapping("/block/{username}")
     public void block(@PathVariable String username) {
-        adminService.blockUser(username);
+        adminService.blockUser(username, false);
     }
 
     @PutMapping("/unblock/{username}")
@@ -26,6 +26,7 @@ public class AdminController {
         adminService.unblockUser(username);
     }
 
+    // todo PUT /api/admin/{username}/roles?role=ADMIN
     @PutMapping("/op/{username}")
     public void giveAdmin(@PathVariable String username) {
         adminService.op(username);

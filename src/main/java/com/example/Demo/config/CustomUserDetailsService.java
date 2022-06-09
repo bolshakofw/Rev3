@@ -16,10 +16,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+//todo в сервисы
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    //todo lombok
     public CustomUserDetailsService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

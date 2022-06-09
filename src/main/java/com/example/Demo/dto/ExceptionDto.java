@@ -11,7 +11,7 @@ public class ExceptionDto {
     private final String message;
 
     public ExceptionDto(String message) {
-        timestamp = new Timestamp(System.currentTimeMillis());
+        this.timestamp = new Timestamp(System.currentTimeMillis());
         this.message = message;
     }
 }

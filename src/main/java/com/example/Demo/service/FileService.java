@@ -62,7 +62,8 @@ public class FileService {
 
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
-        pochta.sendEmail(currentUser.getEmail(),"File uploaded","Your file uploaded successfully");
+        //todo вынести тему и тело в енамы
+        pochta.sendEmail(currentUser.getEmail(), "File uploaded", "Your file uploaded successfully");
         return "File uploaded successfully";
     }
 
