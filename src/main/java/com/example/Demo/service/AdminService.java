@@ -43,7 +43,7 @@ public class AdminService {
 //        }
 //
 //        roles.add(role);
-//        //todo вынести обращение в базу за текущим юзером сюда
+//        // todo вынести обращение в базу за текущим юзером сюда
 //        userProfile.setAdmin(currentUser);
 //        userRepository.save(userProfile);
 //
