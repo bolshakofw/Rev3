@@ -5,7 +5,7 @@ import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
-import com.example.Demo.errors.exception.users.ChangePassException;
+import com.example.Demo.errors.exception.users.ChangePasswordException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,14 +27,14 @@ import java.util.List;
 @AllArgsConstructor
 public class AuthService {
 
-// todo убрать состояние, сделать определение админа через бд
+    // todo убрать состояние, сделать определение админа через бд
     public List<String> roles;
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
-    //todo вынести в конфиги
+    // todo вынести в конфиги
     public ResponseEntity<String> signin(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
@@ -43,7 +43,7 @@ public class AuthService {
     }
 
     public ResponseEntity<String> signup(SignUpDto signUpDto) {
-        //todo через ошибки
+        // todo через ошибки
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
             return new ResponseEntity<>("Username is already taken!", HttpStatus.BAD_REQUEST);
         }
@@ -57,7 +57,7 @@ public class AuthService {
         userProfile.setUsername(signUpDto.getUsername());
         userProfile.setEmail(signUpDto.getEmail());
         userProfile.setPassword(passwordEncoder.encode(signUpDto.getPassword()));
-        userProfile.setAcces(true);
+        userProfile.setAccess(true);
 
         if (!roles.contains("ROLE_ADMIN") && roleRepository.findByRole("ROLE_ADMIN").isPresent()) {
             Role role = roleRepository.findByRole("ROLE_ADMIN").get();
@@ -72,13 +72,13 @@ public class AuthService {
 
         userRepository.save(userProfile);
 
-        //todo дто для успешных ответов
+        // todo дто для успешных ответов
         return new ResponseEntity<>("Registered successfully", HttpStatus.OK);
     }
 
 
     public UserProfile getCurrentUser() {
-        //todo хранить всю нужную инфу в контексте
+        // todo хранить всю нужную инфу в контексте
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userRepository.findByEmail(user.getUsername()).isPresent()) {
             return userRepository.findByEmail(user.getUsername()).get();
@@ -90,14 +90,17 @@ public class AuthService {
 
     public void changePass(String newpas) {
         UserProfile userProfile = getCurrentUser();
-        //todo pe.matches()
+
+        // todo pe.matches()*
+
         String newEncodedPass = passwordEncoder.encode(newpas);
-        if (userProfile.getPassword().equals(newEncodedPass)) {
-            throw new ChangePassException("Passwords are the same");
+        if (passwordEncoder.matches(newpas, userProfile.getPassword())) {
+            throw new ChangePasswordException("Passwords are the same");
         }
         userProfile.setPassword(newEncodedPass);
-        userProfile.setPasschange(new Timestamp(System.currentTimeMillis()));
+        userProfile.setPasswordChangeTime(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userProfile);
+
     }
 
 

@@ -30,7 +30,7 @@ public class UserProfile {
 
     private String email;
 
-    private Timestamp passchange;
+    private Timestamp passwordChangeTime;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "user_roles",
@@ -40,8 +40,7 @@ public class UserProfile {
     )
     private Set<Role> roles;
 
-    private boolean acces;
-
+    private boolean access;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FileData> files;

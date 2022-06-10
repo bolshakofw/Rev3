@@ -5,8 +5,7 @@ import com.example.Demo.errors.exception.files.EmptyFieldException;
 import com.example.Demo.errors.exception.files.FileDataNotFoundException;
 import com.example.Demo.errors.exception.files.InvalidFileSizeException;
 import com.example.Demo.errors.exception.files.InvalidFileTypeException;
-import com.example.Demo.errors.exception.users.AdminException;
-import com.example.Demo.errors.exception.users.ChangePassException;
+import com.example.Demo.errors.exception.users.ChangePasswordException;
 import com.example.Demo.errors.exception.users.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -61,17 +60,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .body(new ExceptionDto(e.getMessage()));
     }
 
-    @ExceptionHandler({ChangePassException.class})
+    @ExceptionHandler({ChangePasswordException.class})
     public ResponseEntity<ExceptionDto> handleChangePassException(Exception e) {
         log.warn("Passwords are the same", e);
-        return ResponseEntity
-                .badRequest()
-                .body(new ExceptionDto(e.getMessage()));
-    }
-
-    @ExceptionHandler({AdminException.class})
-    public ResponseEntity<ExceptionDto> handleAdminException(Exception e) {
-        log.warn("No permission", e);
         return ResponseEntity
                 .badRequest()
                 .body(new ExceptionDto(e.getMessage()));

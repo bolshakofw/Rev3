@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 
 public class SwaggerConfig {
 
-    // todo сделать сваггер доступным без авторизации + добавить авторизацию в сваггер*
+    // todo сделать сваггер доступным без авторизации + добавить авторизацию в сваггер
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info()
