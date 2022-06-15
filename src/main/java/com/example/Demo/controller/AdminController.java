@@ -1,7 +1,6 @@
 package com.example.Demo.controller;
 
 
-import com.example.Demo.entity.Role;
 import com.example.Demo.service.AdminService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,15 +16,15 @@ public class AdminController {
     private AdminService adminService;
 
 
-    @PutMapping("/accesUser/{username}/{access}")
-    public void setAccess(@PathVariable String username, boolean access) {
+    @PutMapping("/accessUser/{username}/{access}")
+    public void setAccess(@PathVariable String username, @PathVariable boolean access) {
         adminService.accessUser(username, access);
     }
 
 
-    // todo PUT /api/admin/{username}/roles?role=ADMIN
+    // todo PUT /api/admin/{username}/roles?role=ADMIN *
     @PutMapping("{username}/roles/{role}")
-    public void giveRole(@PathVariable String username, String role) {
+    public void giveRole(@PathVariable String username, @PathVariable String role) {
         adminService.giveRole(username, role);
     }
 

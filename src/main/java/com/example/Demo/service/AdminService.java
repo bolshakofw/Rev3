@@ -21,47 +21,32 @@ public class AdminService {
 
     private AuthService authService;
 
-    //todo объединить методы раз/блокировки*
+    //todo объединить методы раз/блокировки *
     public void accessUser(String username, boolean access) {
 
         //todo убрать .get(), сделать orElseThrow()*
         UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
-
+        userProfile.setAccess(true);
         userProfile.setAccess(access);
         userRepository.save(userProfile);
     }
 
-
-//    public void giveRole(String username, String role) {
-//        UserProfile currentUser = authService.getCurrentUser();
-//        UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
-//        Role role1 = roleRepository.findByRole("ROLE_" + role).orElseThrow();
-//
-//        Set<Role> roles = userProfile.getRoles();
-//        if (roles.contains(role)) {
-//            throw new PermissionException("User is already admin");
-//        }
-//
-//        roles.add(role);
-//        // todo вынести обращение в базу за текущим юзером сюда
-//        userProfile.setAdmin(currentUser);
-//        userRepository.save(userProfile);
-//
-//
-//    }
-
-
-    public void giveRole(String username,String role){
+    public void giveRole(String username, String role) {
 
         UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
-        Role giveRole = roleRepository.findByRole("ROLE_" + role).orElseThrow();
-
+        Role givenRole = roleRepository.findByRole("ROLE_" + role).orElseThrow();
+        Role roleUser = roleRepository.findByRole("ROLE_USER").orElseThrow();
+        Role roleAdmin = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
         Set<Role> roles = userProfile.getRoles();
-        if (roles.contains(role)) {
-            throw new PermissionException("User is already admin");
+        if (roles.contains(roleAdmin) && givenRole.equals(roleAdmin)) {
+            throw new PermissionException("User is already ADMIN");
+        } else if (givenRole.equals(roleUser)) {
+            roles.remove(roleAdmin);
+        } else {
+            roles.add(givenRole);
+            userProfile.setAdmin(authService.getCurrentUser());
         }
-        roles.add(giveRole);
-        userProfile.setAdmin(authService.getCurrentUser());
+
         userRepository.save(userProfile);
     }
 

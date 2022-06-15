@@ -2,6 +2,7 @@ package com.example.Demo.controller;
 
 
 import com.example.Demo.dto.FileDataDto;
+import com.example.Demo.dto.SuccessDto;
 import com.example.Demo.service.FileService;
 import com.example.Demo.service.FileStorage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,7 +37,7 @@ public class FileController {
     @PostMapping
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
-    public String upload(MultipartFile file) throws IOException {
+    public ResponseEntity<SuccessDto> upload(MultipartFile file) throws IOException {
         return fileService.upload(file);
     }
 
@@ -43,8 +45,8 @@ public class FileController {
     @DeleteMapping("/{uuid}")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Удаление файла", description = "Удаляет файл по UUID")
-    public void delete(@PathVariable("uuid") UUID uuid) {
-        fileService.deleteFile(uuid);
+    public SuccessDto delete(@PathVariable("uuid") UUID uuid) {
+        return fileService.deleteFile(uuid);
     }
 
 

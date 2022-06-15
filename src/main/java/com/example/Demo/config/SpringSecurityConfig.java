@@ -32,40 +32,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-
         http
                 .csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/index.html/**").permitAll()
+                .antMatchers("/swagger-ui.html/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/file/download/**").permitAll()
-                .antMatchers("/", "/csrf", "/v2/api-docs", "/swagger-resources/configuration/ui", "/configuration/ui", "/swagger-resources", "/swagger-resources/configuration/security", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
                 .antMatchers("/api/file/**").hasAnyRole("USER")
                 .antMatchers("/api/admin/**").hasAnyRole("ADMIN")
-                .antMatchers("/").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
-                .and()
+                .and().formLogin().and().logout().and()
                 .httpBasic();
     }
 
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/v2/api-docs",
-                "/configuration/ui",
-                "/swagger-resources/**",
-                "/configuration/security",
-                "/swagger-ui.html",
-                "/webjars/**");
-    }
-
-
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController("/home").setViewName("home");
-//        registry.addViewController("/").setViewName("home");
-//        registry.addViewController("/hello").setViewName("hello");
-//        registry.addViewController("/login").setViewName("login");
-//    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -84,5 +67,11 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
+    }
+    @Override
+    public void configure(WebSecurity web){
+        web.ignoring().antMatchers(
+                "/swagger-ui",
+                "/index.html/**");
     }
 }

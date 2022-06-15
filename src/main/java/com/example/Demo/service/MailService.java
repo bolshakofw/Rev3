@@ -30,10 +30,7 @@ public class MailService {
         mailSender.send(message);
 
         //todo log*
-//        System.out.println("Mail sent successfully...");
-
-        log.info("Mail sent successfully"
-        );
+        log.info("Mail sent successfully");
 
     }
 

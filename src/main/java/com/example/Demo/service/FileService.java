@@ -1,6 +1,8 @@
 package com.example.Demo.service;
 
+import com.example.Demo.Enums.MailEnum;
 import com.example.Demo.dto.FileDataDto;
+import com.example.Demo.dto.SuccessDto;
 import com.example.Demo.entity.FileData;
 import com.example.Demo.entity.FileData_;
 import com.example.Demo.entity.UserProfile;
@@ -10,6 +12,8 @@ import com.example.Demo.errors.exception.files.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,12 +39,12 @@ public class FileService {
     private final FileRepository fileRepo;
     private final FileStorage fileStorage;
 
-    private final MailService pochta;
+    private final MailService mailService;
 
     private final AuthService authService;
 
 
-    public String upload(MultipartFile file) throws IOException {
+    public ResponseEntity<SuccessDto> upload(MultipartFile file) throws IOException {
 
 
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
@@ -62,18 +66,21 @@ public class FileService {
 
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
-        //todo вынести тему и тело в енамы
-        pochta.sendEmail(currentUser.getEmail(), "File uploaded", "Your file uploaded successfully");
-        return "File uploaded successfully";
+        // todo вынести тему и тело в енамы*
+        mailService.sendEmail(currentUser.getEmail(), MailEnum.BODY.get(), MailEnum.SUBJECT.get());
+        return new ResponseEntity<>(HttpStatus.OK);
+
     }
 
-    public void deleteFile(UUID uuid) {
-
+    public SuccessDto deleteFile(UUID uuid) {
 
         fileStorage.checkExists(uuid);
         fileRepo.deleteById(uuid);
         File file = fileStorage.getOrCreateById(uuid);
-        file.delete();
+        if(file.delete()){
+            return new SuccessDto("File deleted successfully");
+        };
+        return null;
     }
 
     public List<String> list() {
@@ -82,7 +89,6 @@ public class FileService {
 
 
     public void updateName(UUID id, String fileName) {
-
 
         fileStorage.checkExists(id);
         FileData fileData = fileStorage.getFileDataById(id);

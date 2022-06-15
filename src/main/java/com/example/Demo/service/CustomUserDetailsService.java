@@ -3,6 +3,7 @@ package com.example.Demo.service;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -16,15 +17,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-//todo в сервисы
+@RequiredArgsConstructor
+//todo в сервисы*
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    //todo lombok
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    //todo lombok*
+
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
