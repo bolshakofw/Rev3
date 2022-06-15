@@ -38,15 +38,17 @@ public class FileController {
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Загрузка файла", description = "Загружает файл в базу данных")
     public ResponseEntity<SuccessDto> upload(MultipartFile file) throws IOException {
-        return fileService.upload(file);
+        fileService.upload(file);
+        return ResponseEntity.ok(new SuccessDto("File uploaded"));
     }
 
 
     @DeleteMapping("/{uuid}")
     @Tag(name = "Файлы", description = "Действия с файлами")
     @Operation(summary = "Удаление файла", description = "Удаляет файл по UUID")
-    public SuccessDto delete(@PathVariable("uuid") UUID uuid) {
-        return fileService.deleteFile(uuid);
+    public ResponseEntity<SuccessDto> delete(@PathVariable("uuid") UUID uuid) {
+        fileService.deleteFile(uuid);
+        return ResponseEntity.ok(new SuccessDto("File deleted successfully"));
     }
 
 
@@ -96,8 +98,9 @@ public class FileController {
     @PutMapping("/{uuid}")
     @Tag(name = "Имена файлов", description = "Действия с именами файлов")
     @Operation(summary = "Изменение имени файла", description = "Изменяет имя файла по его UUID")
-    public void change(@PathVariable UUID uuid, @RequestParam String fileName) {
+    public ResponseEntity<SuccessDto> change(@PathVariable UUID uuid, @RequestParam String fileName) {
         fileService.updateName(uuid, fileName);
+        return ResponseEntity.ok(new SuccessDto("Filename changed"));
     }
 
 

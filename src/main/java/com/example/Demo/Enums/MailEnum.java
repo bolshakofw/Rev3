@@ -7,12 +7,12 @@ public enum MailEnum {
 
     private final String mail;
 
-    public String get(){
-        return mail;
+    MailEnum(String mail) {
+        this.mail = mail;
     }
 
-    MailEnum(String mail){
-        this.mail = mail;
+    public String get() {
+        return mail;
     }
 
 

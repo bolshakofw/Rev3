@@ -44,7 +44,7 @@ public class FileService {
     private final AuthService authService;
 
 
-    public ResponseEntity<SuccessDto> upload(MultipartFile file) throws IOException {
+    public void upload(MultipartFile file) throws IOException {
 
 
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
@@ -68,19 +68,15 @@ public class FileService {
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
         // todo вынести тему и тело в енамы*
         mailService.sendEmail(currentUser.getEmail(), MailEnum.BODY.get(), MailEnum.SUBJECT.get());
-        return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
-    public SuccessDto deleteFile(UUID uuid) {
+    public void deleteFile(UUID uuid) {
 
         fileStorage.checkExists(uuid);
         fileRepo.deleteById(uuid);
         File file = fileStorage.getOrCreateById(uuid);
-        if(file.delete()){
-            return new SuccessDto("File deleted successfully");
-        };
-        return null;
+        file.delete();
+
     }
 
     public List<String> list() {

@@ -43,7 +43,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body(new ExceptionDto(e.getMessage()));
     }
-    @ExceptionHandler({InvalidFileSizeException.class, EmptyFieldException.class,InvalidFileTypeException.class})
+
+    @ExceptionHandler({InvalidFileSizeException.class, EmptyFieldException.class})
     public ResponseEntity<ExceptionDto> handleWrongFileSizeException(Exception e) {
         log.warn("Incorrect file size: ", e);
         return ResponseEntity

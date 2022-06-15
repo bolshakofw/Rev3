@@ -17,19 +17,22 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/signin")
-    public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
-        return authService.signin(loginDto);
+    public ResponseEntity<SuccessDto> authenticateUser(@RequestBody LoginDto loginDto) {
+        authService.signin(loginDto);
+        return ResponseEntity.ok(new SuccessDto("Successful login"));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<SuccessDto> registerUser(@RequestBody SignUpDto signUpDto) {
         //todo вынести респонсентити в контроллер*
-        return authService.signup(signUpDto);
+        authService.signup(signUpDto);
+        return ResponseEntity.ok(new SuccessDto("Registration succeed"));
     }
 
     @PutMapping("/changePassword/")
     public ResponseEntity<SuccessDto> changePassword(@RequestParam String password) {
-        return authService.changePass(password);
+        authService.changePass(password);
+        return ResponseEntity.ok(new SuccessDto("Password changed successfully"));
     }
 
 }

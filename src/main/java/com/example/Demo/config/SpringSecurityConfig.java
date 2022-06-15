@@ -34,9 +34,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .csrf().disable()
+                .cors().disable()
                 .authorizeRequests()
-                .antMatchers("/index.html/**").permitAll()
-                .antMatchers("/swagger-ui.html/**").permitAll()
+                .antMatchers("/v3/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/file/download/**").permitAll()
                 .antMatchers("/api/file/**").hasAnyRole("USER")
@@ -45,7 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticated()
                 .and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
-                .and().formLogin().and().logout().and()
+                .and()
                 .httpBasic();
     }
 
@@ -68,8 +68,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
     }
+
     @Override
-    public void configure(WebSecurity web){
+    public void configure(WebSecurity web) {
         web.ignoring().antMatchers(
                 "/swagger-ui",
                 "/index.html/**");

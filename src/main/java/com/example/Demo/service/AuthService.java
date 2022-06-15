@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.util.Collections;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -37,14 +36,13 @@ public class AuthService {
     private PasswordEncoder passwordEncoder;
 
 
-    public ResponseEntity<String> signin(LoginDto loginDto) {
+    public void signin(LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getUsernameOrEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
     }
 
-    public ResponseEntity<SuccessDto> signup(SignUpDto signUpDto) {
+    public void signup(SignUpDto signUpDto) {
         // todo через ошибки *
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
             throw new UsernameTakenException(signUpDto.getUsername() + " is already taken");
@@ -62,18 +60,19 @@ public class AuthService {
         userProfile.setAccess(true);
 
         Role adminRole = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
+        // если уже два админа то выдаёт ошибку
         if (userRepository.findByRoles(adminRole).isEmpty()) {
             userProfile.setRoles(Collections.singleton(adminRole));
             userProfile.setAdmin(userProfile);
-        } else if (userRepository.findByRoles(adminRole).isPresent()) {
+        } else {
             Role role = roleRepository.findByRole("ROLE_USER").orElseThrow();
             userProfile.setRoles(Collections.singleton(role));
         }
 
         userRepository.save(userProfile);
 
-        // todo дто для успешных ответов
-        return new ResponseEntity<>(HttpStatus.OK);
+        // todo дто для успешных ответов*
+
     }
 
 
@@ -83,7 +82,7 @@ public class AuthService {
         return userRepository.findByEmail(user.getUsername()).orElseThrow();
     }
 
-    public ResponseEntity<SuccessDto> changePass(String newPassword) {
+    public void changePass(String newPassword) {
         UserProfile userProfile = getCurrentUser();
 
         // todo pe.matches()*
@@ -96,7 +95,7 @@ public class AuthService {
         userProfile.setPasswordChangeTime(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userProfile);
 
-        return null;
+
     }
 
 }
