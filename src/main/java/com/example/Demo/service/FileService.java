@@ -2,7 +2,6 @@ package com.example.Demo.service;
 
 import com.example.Demo.Enums.MailEnum;
 import com.example.Demo.dto.FileDataDto;
-import com.example.Demo.dto.SuccessDto;
 import com.example.Demo.entity.FileData;
 import com.example.Demo.entity.FileData_;
 import com.example.Demo.entity.UserProfile;
@@ -12,8 +11,6 @@ import com.example.Demo.errors.exception.files.InvalidFileTypeException;
 import com.example.Demo.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,13 +43,11 @@ public class FileService {
 
     public void upload(MultipartFile file) throws IOException {
 
-
         if (!CONTENT_TYPES.contains((file.getContentType()))) {
             throw new InvalidFileTypeException(file.getContentType() + " not a valid file type , supported file types " + CONTENT_TYPES);
         } else if (!StringUtils.hasLength(file.getOriginalFilename())) {
             throw new EmptyFieldException("Empty filename or file not received");
         }
-
 
         FileData fileData = new FileData();
         fileData.setFileName(file.getOriginalFilename());
@@ -67,7 +62,7 @@ public class FileService {
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
         // todo вынести тему и тело в енамы*
-        mailService.sendEmail(currentUser.getEmail(), MailEnum.BODY.get(), MailEnum.SUBJECT.get());
+        //mailService.sendEmail(currentUser.getEmail(), MailEnum.BODY.get(), MailEnum.SUBJECT.get());
     }
 
     public void deleteFile(UUID uuid) {

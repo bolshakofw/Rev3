@@ -29,6 +29,7 @@ public class AdminService {
         userProfile.setAccess(true);
         userProfile.setAccess(access);
         userRepository.save(userProfile);
+
     }
 
     public void giveRole(String username, String role) {
@@ -38,17 +39,19 @@ public class AdminService {
         Role roleUser = roleRepository.findByRole("ROLE_USER").orElseThrow();
         Role roleAdmin = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
         Set<Role> roles = userProfile.getRoles();
+        if(authService.getCurrentUser().getAdmin().equals(userProfile)){
+            throw new PermissionException("ADMIN < ADMIN");
+        }
         if (roles.contains(roleAdmin) && givenRole.equals(roleAdmin)) {
             throw new PermissionException("User is already ADMIN");
         } else if (givenRole.equals(roleUser)) {
             roles.remove(roleAdmin);
+            roles.add(roleUser);
         } else {
             roles.add(givenRole);
             userProfile.setAdmin(authService.getCurrentUser());
         }
-
         userRepository.save(userProfile);
     }
-
 
 }

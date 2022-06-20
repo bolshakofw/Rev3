@@ -1,5 +1,6 @@
 package com.example.Demo.config;
 
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -11,18 +12,20 @@ import org.springframework.context.annotation.Configuration;
 @SecurityScheme(
         name = "basicAuth",
         type = SecuritySchemeType.HTTP,
-        scheme = "basic"
+        scheme = "basic",
+        in = SecuritySchemeIn.HEADER
 )
 
 
 public class SwaggerConfig {
 
-    // todo сделать сваггер доступным без авторизации + добавить авторизацию в сваггер
+    // todo сделать сваггер доступным без авторизации* + добавить авторизацию в сваггер
+
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI().info(new Info()
                 .title("File Storage")
-                .version("1.0.0"));
+                .version("20.00.00"));
 
     }
 

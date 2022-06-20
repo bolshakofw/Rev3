@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -32,18 +33,22 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        http
-                .csrf().disable()
+        http.
+                csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
-                .antMatchers("/v3/**").permitAll()
                 .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/v3/**","/configuration/ui",
+                        "/swagger-resources/**",
+                        "/webjars/**",
+                        "/configuration/security",
+                        "/swagger-ui.html","/swagger-ui/**").permitAll()
                 .antMatchers("/api/file/download/**").permitAll()
                 .antMatchers("/api/file/**").hasAnyRole("USER")
                 .antMatchers("/api/admin/**").hasAnyRole("ADMIN")
                 .anyRequest()
                 .authenticated()
-                .and()
+                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .exceptionHandling().accessDeniedHandler(accessDeniedHandler())
                 .and()
                 .httpBasic();
@@ -64,15 +69,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+
+
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
     }
 
-    @Override
-    public void configure(WebSecurity web) {
-        web.ignoring().antMatchers(
-                "/swagger-ui",
-                "/index.html/**");
-    }
+
 }

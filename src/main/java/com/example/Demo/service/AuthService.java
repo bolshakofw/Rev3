@@ -3,7 +3,6 @@ package com.example.Demo.service;
 
 import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
-import com.example.Demo.dto.SuccessDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.EmailTakenException;
@@ -12,13 +11,10 @@ import com.example.Demo.errors.exception.users.ChangePasswordException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -60,7 +56,7 @@ public class AuthService {
         userProfile.setAccess(true);
 
         Role adminRole = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
-        // если уже два админа то выдаёт ошибку
+
         if (userRepository.findByRoles(adminRole).isEmpty()) {
             userProfile.setRoles(Collections.singleton(adminRole));
             userProfile.setAdmin(userProfile);
@@ -76,11 +72,12 @@ public class AuthService {
     }
 
 
-    public UserProfile getCurrentUser() {
-        // todo хранить всю нужную инфу в контексте*
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userRepository.findByEmail(user.getUsername()).orElseThrow();
+    public UserProfile getCurrentUser(){
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepository.findByEmail(username).orElseThrow();
     }
+
+
 
     public void changePass(String newPassword) {
         UserProfile userProfile = getCurrentUser();
@@ -88,13 +85,14 @@ public class AuthService {
         // todo pe.matches()*
 
         String newEncodedPass = passwordEncoder.encode(newPassword);
+
         if (passwordEncoder.matches(newPassword, userProfile.getPassword())) {
             throw new ChangePasswordException("Passwords are the same");
         }
+
         userProfile.setPassword(newEncodedPass);
         userProfile.setPasswordChangeTime(new Timestamp(System.currentTimeMillis()));
         userRepository.save(userProfile);
-
 
     }
 

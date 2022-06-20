@@ -4,9 +4,11 @@ package com.example.Demo.controller;
 import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.dto.SuccessDto;
+import com.example.Demo.entity.UserProfile;
 import com.example.Demo.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,15 +18,10 @@ public class AuthController {
 
     private AuthService authService;
 
-    @PostMapping("/signin")
-    public ResponseEntity<SuccessDto> authenticateUser(@RequestBody LoginDto loginDto) {
-        authService.signin(loginDto);
-        return ResponseEntity.ok(new SuccessDto("Successful login"));
-    }
 
     @PostMapping("/signup")
     public ResponseEntity<SuccessDto> registerUser(@RequestBody SignUpDto signUpDto) {
-        //todo вынести респонсентити в контроллер*
+        // todo вынести респонсентити в контроллер*
         authService.signup(signUpDto);
         return ResponseEntity.ok(new SuccessDto("Registration succeed"));
     }
@@ -34,5 +31,4 @@ public class AuthController {
         authService.changePass(password);
         return ResponseEntity.ok(new SuccessDto("Password changed successfully"));
     }
-
 }
