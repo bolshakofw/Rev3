@@ -1,10 +1,10 @@
 package com.example.Demo.service;
 
-import com.example.Demo.Enums.MailEnum;
 import com.example.Demo.dto.FileDataDto;
 import com.example.Demo.entity.FileData;
 import com.example.Demo.entity.FileData_;
 import com.example.Demo.entity.UserProfile;
+import com.example.Demo.enums.MailEnum;
 import com.example.Demo.errors.exception.files.EmptyFieldException;
 import com.example.Demo.errors.exception.files.FileDataNotFoundException;
 import com.example.Demo.errors.exception.files.InvalidFileTypeException;
@@ -61,8 +61,8 @@ public class FileService {
 
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
-        // todo вынести тему и тело в енамы*
-        //mailService.sendEmail(currentUser.getEmail(), MailEnum.BODY.get(), MailEnum.SUBJECT.get());
+
+        mailService.sendEmail(currentUser.getEmail(), MailEnum.FILE_UPLOADED.getSubject(), MailEnum.FILE_UPLOADED.getBody());
     }
 
     public void deleteFile(UUID uuid) {

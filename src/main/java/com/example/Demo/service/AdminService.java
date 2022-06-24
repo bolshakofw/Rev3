@@ -21,10 +21,9 @@ public class AdminService {
 
     private AuthService authService;
 
-    //todo объединить методы раз/блокировки *
-    public void accessUser(String username, boolean access) {
 
-        //todo убрать .get(), сделать orElseThrow()*
+    public void setAccessUser(String username, boolean access) {
+        //todo добавить текст кого искал*
         UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
         userProfile.setAccess(true);
         userProfile.setAccess(access);
@@ -39,7 +38,7 @@ public class AdminService {
         Role roleUser = roleRepository.findByRole("ROLE_USER").orElseThrow();
         Role roleAdmin = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
         Set<Role> roles = userProfile.getRoles();
-        if(authService.getCurrentUser().getAdmin().equals(userProfile)){
+        if (authService.getCurrentUser().getAdmin().equals(userProfile)) {
             throw new PermissionException("ADMIN < ADMIN");
         }
         if (roles.contains(roleAdmin) && givenRole.equals(roleAdmin)) {

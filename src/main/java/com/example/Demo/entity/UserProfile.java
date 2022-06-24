@@ -1,9 +1,12 @@
 package com.example.Demo.entity;
 
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import org.hibernate.annotations.GenericGenerator;
+
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -41,6 +44,7 @@ public class UserProfile {
     private Set<Role> roles;
 
     private boolean access;
+
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<FileData> files;

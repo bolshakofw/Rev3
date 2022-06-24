@@ -1,13 +1,14 @@
 package com.example.Demo.service;
 
 
-import com.example.Demo.dto.LoginDto;
+
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.EmailTakenException;
 import com.example.Demo.errors.exception.UsernameTakenException;
 import com.example.Demo.errors.exception.users.ChangePasswordException;
+import com.example.Demo.errors.exception.users.UserNotFoundException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -25,21 +26,16 @@ import java.util.Collections;
 @AllArgsConstructor
 public class AuthService {
 
-    // todo убрать состояние, сделать определение админа через бд*
+
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
 
-    public void signin(LoginDto loginDto) {
-        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                loginDto.getUsernameOrEmail(), loginDto.getPassword()));
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
 
     public void signup(SignUpDto signUpDto) {
-        // todo через ошибки *
+
         if (userRepository.existsByUsername(signUpDto.getUsername())) {
             throw new UsernameTakenException(signUpDto.getUsername() + " is already taken");
         }
@@ -67,22 +63,19 @@ public class AuthService {
 
         userRepository.save(userProfile);
 
-        // todo дто для успешных ответов*
-
     }
 
-
-    public UserProfile getCurrentUser(){
+    public UserProfile getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(username.isEmpty()){
+            throw new UserNotFoundException("User with username " + username + " not found");
+        }
         return userRepository.findByEmail(username).orElseThrow();
     }
 
 
-
     public void changePass(String newPassword) {
         UserProfile userProfile = getCurrentUser();
-
-        // todo pe.matches()*
 
         String newEncodedPass = passwordEncoder.encode(newPassword);
 

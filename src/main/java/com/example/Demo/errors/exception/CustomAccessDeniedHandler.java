@@ -18,13 +18,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, org.springframework.security.access.AccessDeniedException accessDeniedException) throws IOException, ServletException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null) {
-            log.info("User " + authentication.getName() +
-                    " attempted to access the URL: "
-                    + request.getRequestURI()
-
-            );
+            log.info("Forbidden");
         }
-        //todo записывать тело
-        response.sendRedirect(request.getContextPath() + "/access-denied");
+        //todo записывать тело?
+        response.getWriter().write("Forbidden");
     }
 }

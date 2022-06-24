@@ -33,7 +33,6 @@ public class FileStorage {
                 .orElseThrow(() -> FileDataNotFoundException.withUuid(uuid));
     }
 
-
     public void checkExists(UUID uuid) {
         if (!fileRepo.existsById(uuid))
             throw FileDataNotFoundException.withUuid(uuid);

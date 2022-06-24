@@ -13,15 +13,15 @@ import org.springframework.stereotype.Service;
 public class MailService {
 
 
-
     private JavaMailSender mailSender;
 
     @Value("${spring.mail.username}")
     private String mail;
 
+    //todo передавать енам
     public void sendEmail(String toEmail, String subject, String body) {
         SimpleMailMessage message = new SimpleMailMessage();
-        //todo вынести почту в конфиг*
+
         message.setFrom(mail);
         message.setTo(toEmail);
         message.setText(body);
@@ -29,8 +29,8 @@ public class MailService {
 
         mailSender.send(message);
 
-        //todo log*
-        log.info("Mail sent successfully");
+        //todo кому и что*
+        log.info("Mail " + body + " successfully sent to " + toEmail);
 
     }
 

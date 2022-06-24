@@ -1,14 +1,11 @@
 package com.example.Demo.controller;
 
 
-import com.example.Demo.dto.LoginDto;
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.dto.SuccessDto;
-import com.example.Demo.entity.UserProfile;
 import com.example.Demo.service.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
