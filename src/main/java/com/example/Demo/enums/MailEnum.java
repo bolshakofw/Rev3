@@ -8,11 +8,10 @@ import lombok.RequiredArgsConstructor;
 public enum MailEnum {
 
 
-    FILE_UPLOADED("Your file uploaded successfully","File uploaded");
+    FILE_UPLOADED("Your file uploaded successfully", "File uploaded");
 
     private final String body;
+
     private final String subject;
-
-
 
 }

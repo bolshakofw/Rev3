@@ -15,17 +15,17 @@ public class AdminController {
     private AdminService adminService;
 
 
-    // todo admin/user/username?blocked=true or false
-    @PutMapping("/accessUser/{username}/")
-    public ResponseEntity<SuccessDto> setAccess(@PathVariable String username, @RequestBody boolean access) {
-        adminService.setAccessUser(username, access);
+    // todo admin/user/username?blocked=true or false *
+    @PutMapping("/user/{username}/blocked/")
+    public ResponseEntity<SuccessDto> setAccess(@PathVariable String username, @RequestParam boolean blocked) {
+        adminService.setAccessUser(username, blocked);
         return ResponseEntity.ok(new SuccessDto("Access changed"));
     }
 
 
-    // todo PUT /api/admin/{username}/roles?role=ADMIN
+    // todo PUT /api/admin/{username}/roles?role=ADMIN *
     @PutMapping("{username}/roles/")
-    public ResponseEntity<SuccessDto> giveRole(@PathVariable String username, @RequestBody String role) {
+    public ResponseEntity<SuccessDto> giveRole(@PathVariable String username, @RequestParam String role) {
         adminService.giveRole(username, role);
         return ResponseEntity.ok(new SuccessDto("Role changed"));
     }

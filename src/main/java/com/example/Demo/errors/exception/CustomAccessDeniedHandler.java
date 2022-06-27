@@ -20,7 +20,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         if (authentication != null) {
             log.info("Forbidden");
         }
-        //todo записывать тело?
+
         response.getWriter().write("Forbidden");
     }
 }

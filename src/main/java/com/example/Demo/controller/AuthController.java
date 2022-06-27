@@ -18,7 +18,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<SuccessDto> registerUser(@RequestBody SignUpDto signUpDto) {
-        // todo вынести респонсентити в контроллер*
+
         authService.signup(signUpDto);
         return ResponseEntity.ok(new SuccessDto("Registration succeed"));
     }

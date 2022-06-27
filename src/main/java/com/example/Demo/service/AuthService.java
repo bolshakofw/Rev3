@@ -1,20 +1,16 @@
 package com.example.Demo.service;
 
 
-
 import com.example.Demo.dto.SignUpDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.EmailTakenException;
 import com.example.Demo.errors.exception.UsernameTakenException;
 import com.example.Demo.errors.exception.users.ChangePasswordException;
-import com.example.Demo.errors.exception.users.UserNotFoundException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -31,7 +27,6 @@ public class AuthService {
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
-
 
 
     public void signup(SignUpDto signUpDto) {
@@ -67,9 +62,6 @@ public class AuthService {
 
     public UserProfile getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if(username.isEmpty()){
-            throw new UserNotFoundException("User with username " + username + " not found");
-        }
         return userRepository.findByEmail(username).orElseThrow();
     }
 

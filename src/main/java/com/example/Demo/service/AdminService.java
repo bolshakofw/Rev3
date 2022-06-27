@@ -4,6 +4,7 @@ package com.example.Demo.service;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.permission.PermissionException;
+import com.example.Demo.errors.exception.users.UserNotFoundException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -22,18 +23,17 @@ public class AdminService {
     private AuthService authService;
 
 
-    public void setAccessUser(String username, boolean access) {
+    public void setAccessUser(String username, boolean blocked) {
         //todo добавить текст кого искал*
-        UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
-        userProfile.setAccess(true);
-        userProfile.setAccess(access);
+        UserProfile userProfile = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found"));
+        userProfile.setAccess(!blocked);
         userRepository.save(userProfile);
-
     }
 
     public void giveRole(String username, String role) {
 
-        UserProfile userProfile = userRepository.findByUsername(username).orElseThrow();
+        UserProfile userProfile = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found"));
         Role givenRole = roleRepository.findByRole("ROLE_" + role).orElseThrow();
         Role roleUser = roleRepository.findByRole("ROLE_USER").orElseThrow();
         Role roleAdmin = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
