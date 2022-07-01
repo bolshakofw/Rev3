@@ -43,6 +43,10 @@ public class UserProfile {
 
     private boolean access;
 
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "userProfile")
+    private Set<FileData> files;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private UserProfile admin;
 }

@@ -24,4 +24,10 @@ public class Role {
 
     private String role;
 
+    public static class Static {
+        public static final String ROLE_PREFIX = "ROLE_";
+
+        public static final String ROLE_USER = "ROLE_USER";
+        public static final String ROLE_ADMIN = "ROLE_ADMIN";
+    }
 }

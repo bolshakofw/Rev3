@@ -1,9 +1,9 @@
 package com.example.Demo.config;
 
-
 import com.example.Demo.errors.exception.CustomAccessDeniedHandler;
 import com.example.Demo.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,8 +18,8 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
-
 
     private final CustomUserDetailsService customUserDetailsService;
 
@@ -27,7 +27,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -37,6 +36,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/auth/login/**").permitAll()
                 .antMatchers("/v3/**", "/configuration/ui",
                         "/swagger-resources/**",
                         "/webjars/**",
@@ -65,11 +65,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         return super.authenticationManagerBean();
     }
 
-
     @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return new CustomAccessDeniedHandler();
     }
-
 
 }

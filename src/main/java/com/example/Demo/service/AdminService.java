@@ -4,7 +4,6 @@ package com.example.Demo.service;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.permission.PermissionException;
-import com.example.Demo.errors.exception.users.UserNotFoundException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -16,6 +15,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class AdminService {
 
+
     private UserRepository userRepository;
 
     private RoleRepository roleRepository;
@@ -25,21 +25,21 @@ public class AdminService {
 
     public void setAccessUser(String username, boolean blocked) {
         //todo добавить текст кого искал*
-        UserProfile userProfile = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found"));
+        UserProfile userProfile = authService.getUserOrThrow(username);
         userProfile.setAccess(!blocked);
         userRepository.save(userProfile);
     }
 
     public void giveRole(String username, String role) {
 
-        UserProfile userProfile = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException("User with username: " + username + " not found"));
-        Role givenRole = roleRepository.findByRole("ROLE_" + role).orElseThrow();
-        Role roleUser = roleRepository.findByRole("ROLE_USER").orElseThrow();
-        Role roleAdmin = roleRepository.findByRole("ROLE_ADMIN").orElseThrow();
+        UserProfile userProfile = authService.getUserOrThrow(username);
+        Role givenRole = roleRepository.findByRole(Role.Static.ROLE_PREFIX + role).orElseThrow();
+        //todo вынести подобные строки в константы*
+        Role roleUser = roleRepository.findByRole(Role.Static.ROLE_USER).orElseThrow();
+        Role roleAdmin = roleRepository.findByRole(Role.Static.ROLE_ADMIN).orElseThrow();
         Set<Role> roles = userProfile.getRoles();
         if (authService.getCurrentUser().getAdmin().equals(userProfile)) {
-            throw new PermissionException("ADMIN < ADMIN");
+            throw new PermissionException("Doesn't have permissions");
         }
         if (roles.contains(roleAdmin) && givenRole.equals(roleAdmin)) {
             throw new PermissionException("User is already ADMIN");

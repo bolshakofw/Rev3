@@ -61,7 +61,7 @@ public class FileService {
         fileRepo.save(fileData);
         file.transferTo(fileStorage.getOrCreateById(fileData.getUuid()));
 
-        //mailService.sendEmail(currentUser.getEmail(), MailEnum.FILE_UPLOADED.getSubject(), MailEnum.FILE_UPLOADED.getBody());
+        mailService.sendEmail(currentUser.getEmail());
     }
 
     public void deleteFile(UUID uuid) {
