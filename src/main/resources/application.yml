@@ -34,5 +34,7 @@ spring:
     init:
       mode: always
 
+
+
 upload:
   path: C:/Users/karimullin-ai/uploads

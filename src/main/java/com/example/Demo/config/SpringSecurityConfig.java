@@ -1,6 +1,8 @@
 package com.example.Demo.config;
 
 import com.example.Demo.errors.exception.CustomAccessDeniedHandler;
+import com.example.Demo.filter.CustomAuthenticationFilter;
+import com.example.Demo.filter.CustomAuthorizationFilter;
 import com.example.Demo.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
 @Configuration
@@ -23,6 +26,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService customUserDetailsService;
 
+
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -30,13 +34,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
+        customAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
         http.
                 csrf().disable()
                 .cors().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/auth/login/**").permitAll()
                 .antMatchers("/v3/**", "/configuration/ui",
                         "/swagger-resources/**",
                         "/webjars/**",
@@ -46,8 +50,8 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/file/**").hasAnyRole("USER")
                 .antMatchers("/api/admin/**").hasAnyRole("ADMIN")
                 .anyRequest()
-                .authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+                .authenticated().and().addFilter(customAuthenticationFilter).addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic();
     }
 
@@ -57,7 +61,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         auth.userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
-
 
     @Override
     @Bean

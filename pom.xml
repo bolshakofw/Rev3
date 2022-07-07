@@ -60,7 +60,6 @@
         </dependency>
 
 
-
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
@@ -145,14 +144,22 @@
             <version>2.7.0</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
-<!--
+        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api -->
         <dependency>
-            <groupId>org.flywaydb</groupId>
-            <artifactId>flyway-core</artifactId>
-            <version>8.5.12</version>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
         </dependency>
--->
+
+
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-core -->
+        <!--
+                <dependency>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-core</artifactId>
+                    <version>8.5.12</version>
+                </dependency>
+        -->
 
         <!-- https://mvnrepository.com/artifact/javax.mail/mail -->
         <!-- https://mvnrepository.com/artifact/javax.mail/javax.mail-api -->
@@ -176,7 +183,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-
 
 
     </dependencies>

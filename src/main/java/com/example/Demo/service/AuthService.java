@@ -2,10 +2,10 @@ package com.example.Demo.service;
 
 
 import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.example.Demo.dto.JWTDto;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.Demo.dto.SignUpDto;
-import com.example.Demo.dto.SigninDto;
 import com.example.Demo.entity.Role;
 import com.example.Demo.entity.UserProfile;
 import com.example.Demo.errors.exception.EmailTakenException;
@@ -14,19 +14,28 @@ import com.example.Demo.errors.exception.users.ChangePasswordException;
 import com.example.Demo.errors.exception.users.UserNotFoundException;
 import com.example.Demo.repository.RoleRepository;
 import com.example.Demo.repository.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.util.Arrays.stream;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Service
 @AllArgsConstructor
@@ -38,24 +47,6 @@ public class AuthService {
     private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
 
-
-    public JWTDto signin(SigninDto signinDto) {
-        UserProfile userProfile = userRepository.findByUsername(signinDto.getUsername()).orElseThrow();
-        userRepository.findByUsername(signinDto.getUsername());
-        Algorithm algorithm = Algorithm.HMAC256("secret".getBytes());
-        String access_token = JWT.create()
-                .withSubject(userProfile.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() * 10 * 60 * 1000))
-                .withClaim("roles", userProfile.getRoles().stream().toList().toString())
-                .sign(algorithm);
-
-        String refresh_token = JWT.create()
-                .withSubject(userProfile.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
-                .sign(algorithm);
-
-        return new JWTDto(access_token,refresh_token);
-    }
 
     public void signup(SignUpDto signUpDto) {
 
@@ -114,5 +105,7 @@ public class AuthService {
         userRepository.save(userProfile);
 
     }
+
+
 
 }
