@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-
 @Slf4j
 public class MailService {
 
@@ -24,7 +23,6 @@ public class MailService {
     //todo передавать енам *
     public void sendEmail(String toEmail) {
         SimpleMailMessage message = new SimpleMailMessage();
-
 
         message.setFrom(mail);
         message.setTo(toEmail);

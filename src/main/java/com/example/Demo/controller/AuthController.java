@@ -13,6 +13,7 @@ import com.example.Demo.repository.UserRepository;
 import com.example.Demo.service.AuthService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,10 +25,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -62,7 +62,7 @@ public class AuthController {
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject();
-                UserProfile user = userRepository.findByUsername(username).orElseThrow();
+                UserProfile user = userRepository.findByEmail(username).orElseThrow();
                 String token = JWT.create()
                         .withSubject(user.getUsername())
                         .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
@@ -70,10 +70,9 @@ public class AuthController {
                         .sign(algorithm);
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("accessToken", token);
-                tokens.put("refreshToken",refreshToken);
-                response.setContentType(APPLICATION_JSON_VALUE);
-                new ObjectMapper().writeValue(response.getOutputStream(),tokens);
-
+                tokens.put("refreshToken", refreshToken);
+                response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                new ObjectMapper().writeValue(response.getOutputStream(), tokens);
 
 
             } catch (Exception e) {

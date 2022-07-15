@@ -37,21 +37,21 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean());
         customAuthenticationFilter.setFilterProcessesUrl("/api/auth/login");
         http.
-                csrf().disable()
+                csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .cors().disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/**").permitAll()
+                .antMatchers("/api/auth/token/refresh/**").permitAll()
                 .antMatchers("/v3/**", "/configuration/ui",
                         "/swagger-resources/**",
                         "/webjars/**",
                         "/configuration/security",
                         "/swagger-ui.html", "/swagger-ui/**").permitAll()
                 .antMatchers("/api/file/download/**").permitAll()
-                .antMatchers("/api/file/**").hasAnyRole("USER")
+                .antMatchers("/api/file/**").hasAnyAuthority("ROLE_USER")
                 .antMatchers("/api/admin/**").hasAnyRole("ADMIN")
                 .anyRequest()
                 .authenticated().and().addFilter(customAuthenticationFilter).addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .httpBasic();
     }
 

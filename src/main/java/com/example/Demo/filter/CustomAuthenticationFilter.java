@@ -59,8 +59,8 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 //        response.setHeader("refreshToken", refreshToken);
         Map<String, String> tokens = new HashMap<>();
         tokens.put("accessToken", token);
-        tokens.put("refreshToken",refreshToken);
+        tokens.put("refreshToken", refreshToken);
         response.setContentType(APPLICATION_JSON_VALUE);
-        new ObjectMapper().writeValue(response.getOutputStream(),tokens);
+        new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
 }
